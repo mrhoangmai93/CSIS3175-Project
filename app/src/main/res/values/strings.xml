@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Food Lover</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="search_nav_item">Search</string>
+    <string name="recent_view_nav_item">Recent View</string>
+    <string name="favorite_nav_item">Favorite</string>
 </resources>
