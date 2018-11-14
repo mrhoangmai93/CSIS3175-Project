@@ -45,6 +45,23 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // this.getBusinessList();
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (!canAccessLocation()) {
+            ActivityCompat.requestPermissions(this, LOCATION_PERMS, LOCATION_REQUEST);
+        }
+        try {
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
+            //Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            // System.out.println(location);
+        }catch (SecurityException exception) {
+            System.out.println(exception);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         setContentView(R.layout.activity_main);
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -52,12 +69,13 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         loadFragment(fragment);
 
         navigation.setOnNavigationItemSelectedListener(this);
-
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (!canAccessLocation()) {
-            ActivityCompat.requestPermissions(this, LOCATION_PERMS, LOCATION_REQUEST);
+        try {
+            // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
+            Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            System.out.println(location);
+        }catch (SecurityException exception) {
+            System.out.println(exception);
         }
-        // this.getBusinessList();
     }
 
     @Override
