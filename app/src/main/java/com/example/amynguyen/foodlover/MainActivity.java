@@ -41,26 +41,6 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     };
     private static final int LOCATION_REQUEST=1340;
     Fragment fragment = new SearchFragment();
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
-                    return true;
-                case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
-                    return true;
-            }
-            return false;
-        }
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +50,8 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         navigation.setOnNavigationItemSelectedListener(this);
         loadFragment(fragment);
 
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        navigation.setOnNavigationItemSelectedListener(this);
+
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (!canAccessLocation()) {
             ActivityCompat.requestPermissions(this, LOCATION_PERMS, LOCATION_REQUEST);
