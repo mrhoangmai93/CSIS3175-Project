@@ -120,7 +120,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 favorite = (ImageView) view.findViewById(R.id.imageViewFavorite);
-                System.out.println();
+
                     favorite.setImageResource(R.drawable.ic_favorite);
             }
         });
