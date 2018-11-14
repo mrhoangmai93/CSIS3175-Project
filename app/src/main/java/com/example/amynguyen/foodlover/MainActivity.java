@@ -8,13 +8,20 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
+import android.widget.ImageView;
 
+import com.example.amynguyen.foodlover.Fragments.FavoriteFragment;
+import com.example.amynguyen.foodlover.Fragments.RecentFragment;
+import com.example.amynguyen.foodlover.Fragments.SearchFragment;
 import com.example.amynguyen.foodlover.yelpAPI.YelpHelper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -24,7 +31,7 @@ import java.util.Map;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class MainActivity extends AppCompatActivity  implements LocationListener {
+public class MainActivity extends AppCompatActivity  implements LocationListener,BottomNavigationView.OnNavigationItemSelectedListener  {
 
     private TextView mTextMessage;
     private LocationManager mLocationManager;
@@ -33,6 +40,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             ACCESS_COARSE_LOCATION
     };
     private static final int LOCATION_REQUEST=1340;
+    Fragment fragment = new SearchFragment();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -58,8 +66,10 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(this);
+        loadFragment(fragment);
+
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (!canAccessLocation()) {
@@ -134,6 +144,37 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         return(hasPermission(ACCESS_FINE_LOCATION));
     }
     private boolean hasPermission(String perm) {
-        return(PackageManager.PERMISSION_GRANTED==checkSelfPermission(perm));
+        return (PackageManager.PERMISSION_GRANTED == checkSelfPermission(perm));
+    }
+
+    private boolean loadFragment(Fragment fragment) {
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.navigation_search:
+                fragment = new SearchFragment();
+                break;
+
+            case R.id.navigation_favorite:
+                fragment = new FavoriteFragment();
+                break;
+
+            case R.id.navigation_recent:
+                fragment = new RecentFragment();
+                break;
+
+
+
+        }
+        return loadFragment(fragment);
     }
 }
