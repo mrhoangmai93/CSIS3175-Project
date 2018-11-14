@@ -62,4 +62,9 @@ public class BusinessLineItemAdapter extends BaseAdapter {
         return view;
 
     }
+    public synchronized void refresAdapter(ArrayList<Business> busisnesses) {
+        businessInfoList.clear();
+        businessInfoList.addAll(busisnesses);
+        this.notifyDataSetChanged();
+    }
 }

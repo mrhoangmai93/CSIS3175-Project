@@ -6,6 +6,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -26,7 +28,9 @@ import com.example.amynguyen.foodlover.CustomListView.NoScrollListView;
 import com.example.amynguyen.foodlover.Models.Business;
 import com.example.amynguyen.foodlover.R;
 import com.example.amynguyen.foodlover.yelpAPI.YelpHelper;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,11 +39,13 @@ import java.util.Map;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.Context.LOCATION_SERVICE;
 
 public class SearchFragment extends android.support.v4.app.Fragment implements LocationListener {
     View mainView;
-
-    List<Business> businessInfo = new ArrayList<>();
+    BusinessLineItemAdapter myAdapter;
+    NoScrollListView myList;
+    ArrayList<Business> businessInfo = new ArrayList<Business>();
     private TextView mTextMessage;
     private LocationManager mLocationManager;
     private static final String[] LOCATION_PERMS={
@@ -63,6 +69,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         mainView = view;
         search(view);
+        mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         return view;
     }
 
@@ -73,6 +80,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
             @Override
             public void onClick(View view) {
                 locationSearch.setVisibility(view.VISIBLE);
+                getBusinessList();
             }
         });
 
@@ -83,11 +91,9 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
             }
         });
 
-        addResult();
-
-       NoScrollListView myList = (NoScrollListView) view.findViewById(R.id.listViewResult);
-        addResult();
-        BusinessLineItemAdapter myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
+        // addResult();
+        myList = (NoScrollListView) mainView.findViewById(R.id.listViewResult);
+        myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
         myList.setAdapter(myAdapter);
 
     }
@@ -144,12 +150,35 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
                 yelpHelper.setCoordinate(coordinate);
             }
             // Print// create Yelp Helper instance
-            Runnable runnable = new Runnable() {
+            final Handler handler = new Handler(Looper.getMainLooper());
+           Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
                     // execute command
+                    ArrayList<Business> testList = new ArrayList<>();
                     JsonObject result = yelpHelper.getBusinessQuery();
-                    System.out.println(result);
+                    JsonArray arr = result.getAsJsonArray("businesses");
+                    for (JsonElement pa : arr) {
+                        JsonObject business = pa.getAsJsonObject();
+                        String     name     = business.get("name").getAsString();
+                        JsonObject     location = business.get("location").getAsJsonObject();
+                        String address = location.get("address1").getAsString();
+                        JsonArray     categories     = business.get("categories").getAsJsonArray();
+                        JsonObject categoryObject = categories.get(0).getAsJsonObject();
+                        String category = categoryObject.get("title").getAsString();
+                        Double rating = business.get("rating").getAsDouble();
+                        String imageURL = business.get("image_url").getAsString();
+                        testList.add(new Business(name, address, category, rating, imageURL));
+                        System.out.println("Name:" + name +"," + "category:" + category);
+                    }
+                    final ArrayList<Business> finishList = testList;
+                    // myAdapter.refresAdapter(businessInfo);
+                    handler.post(new Runnable(){
+                        public void run() {
+                            myAdapter.refresAdapter(finishList);
+                            // System.out.println("Tao day");
+                        }
+                    });
                 }
             };
             new Thread(runnable).start();
@@ -157,6 +186,5 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
             System.out.println(ex);
         }
     }
-
     //ActivityCompat.checkSelfPermission(getActivity(),perm));
 }

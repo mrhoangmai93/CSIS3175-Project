@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         if (!canAccessLocation()) {
             ActivityCompat.requestPermissions(this, LOCATION_PERMS, LOCATION_REQUEST);
         }
-        this.getBusinessList();
+        // this.getBusinessList();
     }
 
     @Override
@@ -97,31 +97,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             Toast.makeText(this, "Location permission is a must", Toast.LENGTH_SHORT).show();
             finish();
         }else {
-            this.getBusinessList();
-        }
-    }
-    public void getBusinessList() {
-        try {
-            // Get last known location
-            Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            // Execute if its the first location
-                // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
-                if(location != null) {
-                    String coordinate = location.getLatitude() + "," + location.getLongitude();
-                    yelpHelper.setCoordinate(coordinate);
-                }
-                // Print// create Yelp Helper instance
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        // execute command
-                        JsonObject result = yelpHelper.getBusinessQuery();
-                        System.out.println(result);
-                    }
-                };
-                new Thread(runnable).start();
-        } catch (SecurityException ex) {
-            System.out.println(ex);
+            // this.getBusinessList();
         }
     }
     private boolean canAccessLocation() {
