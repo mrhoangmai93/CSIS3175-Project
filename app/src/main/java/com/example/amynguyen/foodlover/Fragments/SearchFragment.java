@@ -16,8 +16,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -45,6 +47,7 @@ import static android.content.Context.LOCATION_SERVICE;
 public class SearchFragment extends android.support.v4.app.Fragment implements LocationListener {
     View mainView;
     EditText distanceInput;
+    ImageView favorite;
     BusinessLineItemAdapter myAdapter;
     NoScrollListView myList;
     ArrayList<Business> businessInfo = new ArrayList<Business>();
@@ -63,10 +66,22 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         mainView = view;
+
         distanceInput = (EditText) view.findViewById(R.id.editTextDistance);
         distanceInput.setFocusable(false);
+        distanceInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                distanceInput.setFocusableInTouchMode(true);
+            }
+        });
+
         search(view);
+        //favorite = (ImageView) view.findViewById(R.id.imageViewFavorite);
+
+
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+
         return view;
     }
 
@@ -100,9 +115,16 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
         myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
 
 
-       NoScrollListView myList = (NoScrollListView) view.findViewById(R.id.listViewResult);
-
         myList.setAdapter(myAdapter);
+        myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                favorite = (ImageView) view.findViewById(R.id.imageViewFavorite);
+                System.out.println();
+                    favorite.setImageResource(R.drawable.ic_favorite);
+            }
+        });
+
 
     }
 
