@@ -44,7 +44,6 @@ public class YelpHelper {
         if(location == null && coordinate == null) return null;
         if(location != null) body.put("location", new Argument("data", location));
         else body.put("coordinate", new Argument("data", coordinate));
-        System.out.println("sadfadsfasf422");
         body.put("term", new Argument("data", term));
         body.put("openNow", new Argument("data", String.valueOf(openNow)));
         if(radius > 0 ) body.put("radius", new Argument("data", String.valueOf(radius)));

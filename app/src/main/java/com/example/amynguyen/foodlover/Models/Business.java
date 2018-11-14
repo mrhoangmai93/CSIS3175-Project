@@ -6,11 +6,12 @@ public class Business {
     String category;
     Double rating;
     String imgURL;
-
+    String distanceFromCurrentLocation = null;
     public Business(String name, String address, String category, Double rating, String imgURL)   {
         this.name = name;
         this.address = address;
         this.category = category;
+
         this.rating = rating;
         this.imgURL = imgURL;
     }
@@ -54,4 +55,12 @@ public class Business {
     public void setImgURL(String imgURL) {
         this.imgURL = imgURL;
     }
+    public String getDistanceFromCurrentLocation() {
+        return distanceFromCurrentLocation;
+    }
+
+    public void setDistanceFromCurrentLocation(String distanceFromCurrentLocation) {
+        this.distanceFromCurrentLocation = distanceFromCurrentLocation;
+    }
+
 }

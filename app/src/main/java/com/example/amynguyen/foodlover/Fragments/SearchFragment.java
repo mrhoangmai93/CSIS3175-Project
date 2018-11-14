@@ -2,6 +2,7 @@ package com.example.amynguyen.foodlover.Fragments;
 
 import android.app.Fragment;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,7 +43,7 @@ import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
 
-public class SearchFragment extends android.support.v4.app.Fragment implements LocationListener {
+public class SearchFragment extends android.support.v4.app.Fragment {
     View mainView;
     EditText distanceInput;
     BusinessLineItemAdapter myAdapter;
@@ -105,58 +106,23 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
         myList.setAdapter(myAdapter);
 
     }
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        // this.getBusinessList();
-        if (location != null) {
-            Log.v("Location Changed", location.getLatitude() + " and " + location.getLongitude());
-            mLocationManager.removeUpdates(this);
-        }
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        int index = 0;
-        Map<String, Integer> PermissionsMap = new HashMap<String, Integer>();
-        for (String permission : permissions){
-            PermissionsMap.put(permission, grantResults[index]);
-            index++;
-        }
-        if((PermissionsMap.get(ACCESS_FINE_LOCATION) != 0)
-                || PermissionsMap.get(ACCESS_COARSE_LOCATION) != 0){
-            // Toast.makeText(this, "Location permission is a must", Toast.LENGTH_SHORT).show();
-            // finish();
-        }else {
-            this.getBusinessList();
-        }
-    }
     public void getBusinessList() {
         try {
+            // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
             // Get last known location
-            Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Criteria c=new Criteria();
+            //if we pass false than
+            //it will check first satellite location than Internet and than Sim Network
+            String provider=mLocationManager.getBestProvider(c, false);
+            Location location = mLocationManager.getLastKnownLocation(provider);
+            //Location location = getLastKnownLocation();
             // Execute if its the first location
             // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
+            // System.out.println(location);
             if(location != null) {
                 String coordinate = location.getLatitude() + "," + location.getLongitude();
                 // yelpHelper.setCoordinate(coordinate);
-                yelpHelper.setCoordinate(String.valueOf("49.20390,-122.91308"));
+                yelpHelper.setCoordinate("49.20390,-122.91308");
             }
             // Print// create Yelp Helper instance
             final Handler handler = new Handler(Looper.getMainLooper());
@@ -166,21 +132,12 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
                     // execute command
                     ArrayList<Business> testList = new ArrayList<>();
                     JsonObject result = yelpHelper.getBusinessQuery();
-                    System.out.println(yelpHelper.getCoordinate());
+                    // System.out.println(yelpHelper.getCoordinate());
                     if(result != null) {
                         JsonArray arr = result.getAsJsonArray("businesses");
                         for (JsonElement pa : arr) {
-                            JsonObject business = pa.getAsJsonObject();
-                            String name = business.get("name").getAsString();
-                            JsonObject location = business.get("location").getAsJsonObject();
-                            String address = location.get("address1").getAsString();
-                            JsonArray categories = business.get("categories").getAsJsonArray();
-                            JsonObject categoryObject = categories.get(0).getAsJsonObject();
-                            String category = categoryObject.get("title").getAsString();
-                            Double rating = business.get("rating").getAsDouble();
-                            String imageURL = business.get("image_url").getAsString();
-                            testList.add(new Business(name, address, category, rating, imageURL));
-                            System.out.println("Name:" + name + "," + "rating:" + rating);
+                            testList.add(getBusinessFromJson(pa));
+                            // System.out.println("Name:" + name + ", " + "rating:" + rating);
                         }
                         final ArrayList<Business> finishList = testList;
                         // myAdapter.refresAdapter(businessInfo);
@@ -198,5 +155,51 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
             System.out.println(ex);
         }
     }
-    //ActivityCompat.checkSelfPermission(getActivity(),perm));
+
+    public Business getBusinessFromJson(JsonElement pa) {
+        String category = "";
+        String address = "";
+        JsonObject business = pa.getAsJsonObject();
+        String name = business.get("name").getAsString();
+        JsonObject location = business.get("location").getAsJsonObject();
+        address = location.get("address1").getAsString()
+                + ", " + location.get("city").getAsString()
+                + ", " + location.get("state").getAsString();
+                //+ ", " + location.get("zip_code").getAsString()
+                //+ ", " + location.get("country").getAsString();
+        JsonArray categories = business.get("categories").getAsJsonArray();
+        for (JsonElement ca : categories) {
+            JsonObject caObj = ca.getAsJsonObject();
+            category += caObj.get("title").getAsString() + ", ";
+        }
+        category = category.substring(0, category.length() - 1);
+        Double rating = business.get("rating").getAsDouble();
+        String imageURL = business.get("image_url").getAsString();
+        Business businessObj = new Business(name, address, category, rating, imageURL);
+        System.out.println(business.get("distance").getAsDouble() * 0.001);
+        businessObj.setDistanceFromCurrentLocation(String.valueOf(Math.round((business.get("distance").getAsDouble() * 0.001) * 100.0) / 100.0) + "km");
+        return businessObj;
+    }
+    private Location getLastKnownLocation() {
+        Location bestLocation = null;
+        try {
+            mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+            List<String> providers = mLocationManager.getProviders(true);
+            for (String provider : providers) {
+                Location l = mLocationManager.getLastKnownLocation(provider);
+                if (l == null) {
+                    continue;
+                }
+                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                    // Found best last known location: %s", l);
+                    bestLocation = l;
+                }
+            }
+        } catch (SecurityException ex) {
+        System.out.println(ex);
+    }
+        return bestLocation;
+    }
 }
+
+//ActivityCompat.checkSelfPermission(getActivity(),perm));

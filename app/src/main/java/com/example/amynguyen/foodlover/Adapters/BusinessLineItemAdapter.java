@@ -52,6 +52,7 @@ public class BusinessLineItemAdapter extends BaseAdapter {
             RatingBar txtReview = (RatingBar) view.findViewById(R.id.ratingBarReview);
             TextView txtCategory = (TextView) view.findViewById(R.id.txtCategory);
             TextView txtAddress = (TextView) view.findViewById(R.id.txtAddress);
+            TextView txtDistance = (TextView) view.findViewById(R.id.txtDistance);
             txtName.setText(businessInfoList.get(i).getName());
             //txtReview.setText(String.valueOf(businessInfoList.get(i).getRating()));
             txtReview.setEnabled(false);
@@ -61,7 +62,8 @@ public class BusinessLineItemAdapter extends BaseAdapter {
             txtReview.invalidate();
             txtCategory.setText(businessInfoList.get(i).getCategory());
             txtAddress.setText(businessInfoList.get(i).getAddress());
-
+            String distance = businessInfoList.get(i).getDistanceFromCurrentLocation();
+            if(distance != null) txtDistance.setText(businessInfoList.get(i).getDistanceFromCurrentLocation());
             new DownloadImageTask(img).execute(businessInfoList.get(i).getImgURL());
         }
 
