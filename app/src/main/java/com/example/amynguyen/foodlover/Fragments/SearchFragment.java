@@ -68,11 +68,18 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
 
     public void search(View view)    {
         final SearchView locationSearch = (SearchView) view.findViewById(R.id.searchViewLocation);
-        SearchView foodSearch = (SearchView) view.findViewById(R.id.searchViewRestaurant);
+        final SearchView foodSearch = (SearchView) view.findViewById(R.id.searchViewRestaurant);
         foodSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 locationSearch.setVisibility(view.VISIBLE);
+                foodSearch.onActionViewExpanded();
+                locationSearch.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        locationSearch.onActionViewExpanded();
+                    }
+                });
             }
         });
 
@@ -80,6 +87,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
             @Override
             public void onFocusChange(View view, boolean b) {
                 locationSearch.setVisibility(view.VISIBLE);
+
             }
         });
 
