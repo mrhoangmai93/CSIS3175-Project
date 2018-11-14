@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     };
     private static final int LOCATION_REQUEST=1340;
     Fragment fragment = new SearchFragment();
+    YelpHelper yelpHelper = new YelpHelper();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,15 +106,17 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             // Execute if its the first location
                 // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
-                String coordinate = location.getLatitude() + "," + location.getLongitude();
-                System.out.println(coordinate);
+                if(location != null) {
+                    String coordinate = location.getLatitude() + "," + location.getLongitude();
+                    yelpHelper.setCoordinate(coordinate);
+                }
                 // Print// create Yelp Helper instance
-                final YelpHelper yelpHelper = new YelpHelper();
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
                         // execute command
                         JsonObject result = yelpHelper.getBusinessQuery();
+                        System.out.println(result);
                     }
                 };
                 new Thread(runnable).start();

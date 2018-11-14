@@ -37,6 +37,7 @@ public class YelpHelper {
         this.connect = new RapidApiConnect(APP_NAME, APP_ID);
         this.body = new HashMap<String, Argument>();
         body.put("accessToken", new Argument("data", YIELP_API_KEY));
+
         gson = new Gson();
     }
     public JsonObject getBusinessQuery() {
@@ -64,6 +65,45 @@ public class YelpHelper {
             System.out.println("Error: " + e);
             return null;
         }
+    }
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
+    }
+
+    public Boolean getOpenNow() {
+        return openNow;
+    }
+
+    public void setOpenNow(Boolean openNow) {
+        this.openNow = openNow;
+    }
+
+    public Double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(Double radius) {
+        this.radius = radius;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getCoordinate() {
+        return coordinate;
+    }
+
+    public void setCoordinate(String coordinate) {
+        this.coordinate = coordinate;
     }
 
 
