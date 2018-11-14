@@ -26,15 +26,15 @@
         android:id="@+id/tableBusiness"
         android:layout_width="0dp"
         android:layout_height="94dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="6dp"
-        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/imgRestaurant"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.025">
+        app:layout_constraintVertical_bias="0.024">
 
         <TableRow
             android:layout_width="match_parent"
@@ -49,62 +49,71 @@
 
             <TextView
                 android:id="@+id/txtDistance"
-                android:layout_width="62dp"
-
+                android:layout_width="35dp"
                 android:padding="3dip"
                 android:text="km"
                 android:textAlignment="viewStart"
                 android:textSize="10sp" />
         </TableRow>
+        <android.support.constraint.ConstraintLayout>
+            <TableRow
+                android:layout_width="264dp"
+                android:layout_height="15dp">
 
-        <TableRow
-            android:layout_width="111dp"
-            android:layout_height="wrap_content">
-            <android.support.constraint.ConstraintLayout>
 
                 <RatingBar
                     android:id="@+id/ratingBarReview"
 
                     style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="80dp"
-                    android:layout_height="match_parent" /></android.support.constraint.ConstraintLayout>
+                    android:layout_height="match_parent" />
 
-        </TableRow>
+                <ImageView
+                    android:id="@+id/imageViewFavorite"
+                    android:layout_width="313dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_favorite_border" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <android.support.constraint.ConstraintLayout>
-            <TextView
-                android:id="@+id/txtCategory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="0dp"
-                android:layout_marginStart="0dp"
-                android:padding="3dip"
-                android:text="Type"
-                android:textSize="12sp" /></android.support.constraint.ConstraintLayout>
-        </TableRow>
 
+            </TableRow>
+        </android.support.constraint.ConstraintLayout>
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <android.support.constraint.ConstraintLayout>
 
                 <TextView
-                    android:id="@+id/txtAddress"
-                    android:layout_width="match_parent"
+                    android:id="@+id/txtCategory"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="0dp"
-                    android:layout_marginStart="0dp"
+                    android:padding="3dip"
+                    android:text="Type"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" /></android.support.constraint.ConstraintLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.constraint.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/txtAddress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:padding="3dip"
                     android:text="Address"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-            </android.support.constraint.ConstraintLayout>
+                    app:layout_constraintStart_toStartOf="parent" /></android.support.constraint.ConstraintLayout>
         </TableRow>
+
     </TableLayout>
+
+
 
 
 </android.support.constraint.ConstraintLayout>
