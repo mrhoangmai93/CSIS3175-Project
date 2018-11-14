@@ -14,15 +14,23 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.amynguyen.foodlover.Adapters.BusinessLineItemAdapter;
+import com.example.amynguyen.foodlover.CustomListView.NoScrollListView;
+import com.example.amynguyen.foodlover.Models.Business;
 import com.example.amynguyen.foodlover.R;
 import com.example.amynguyen.foodlover.yelpAPI.YelpHelper;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -30,12 +38,23 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class SearchFragment extends android.support.v4.app.Fragment implements LocationListener {
     View mainView;
+
+    List<Business> businessInfo = new ArrayList<>();
     private TextView mTextMessage;
     private LocationManager mLocationManager;
     private static final String[] LOCATION_PERMS={
             ACCESS_FINE_LOCATION,
             ACCESS_COARSE_LOCATION
     };
+
+    public void addResult() {
+        businessInfo.add(new Business("a", "b", "c", 3.0,
+                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
+        businessInfo.add(new Business("d", "b", "c", 3.0,
+                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
+        businessInfo.add(new Business("e", "b", "c", 3.0,
+                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
+    }
     private static final int LOCATION_REQUEST=1340;
     YelpHelper yelpHelper = new YelpHelper();
     @Nullable
@@ -63,6 +82,14 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
                 locationSearch.setVisibility(view.VISIBLE);
             }
         });
+
+        addResult();
+
+       NoScrollListView myList = (NoScrollListView) view.findViewById(R.id.listViewResult);
+        addResult();
+        BusinessLineItemAdapter myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
+        myList.setAdapter(myAdapter);
+
     }
 
 

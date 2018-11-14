@@ -4,10 +4,10 @@ public class Business {
     String name;
     String address;
     String category;
-    Integer rating;
+    Double rating;
     String imgURL;
 
-    public Business(String name, String address, String category, Integer rating, String imgURL)   {
+    public Business(String name, String address, String category, Double rating, String imgURL)   {
         this.name = name;
         this.address = address;
         this.category = category;
@@ -39,11 +39,11 @@ public class Business {
         this.category = category;
     }
 
-    public Integer getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 

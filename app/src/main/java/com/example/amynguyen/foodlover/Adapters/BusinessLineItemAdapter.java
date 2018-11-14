@@ -52,7 +52,7 @@ public class BusinessLineItemAdapter extends BaseAdapter {
             TextView txtCategory = (TextView) view.findViewById(R.id.txtCategory);
             TextView txtAddress = (TextView) view.findViewById(R.id.txtAddress);
             txtName.setText(businessInfoList.get(i).getName());
-            txtReview.setText(businessInfoList.get(i).getRating());
+            txtReview.setText(businessInfoList.get(i).getRating().toString());
             txtCategory.setText(businessInfoList.get(i).getCategory());
             txtAddress.setText(businessInfoList.get(i).getAddress());
 
