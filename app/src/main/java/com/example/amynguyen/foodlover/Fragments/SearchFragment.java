@@ -83,7 +83,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
             }
         });
 
-        addResult();
+
 
        NoScrollListView myList = (NoScrollListView) view.findViewById(R.id.listViewResult);
         addResult();
