@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.amynguyen.foodlover.Models.Business;
@@ -48,11 +49,16 @@ public class BusinessLineItemAdapter extends BaseAdapter {
 
             ImageView img = (ImageView) view.findViewById(R.id.imgRestaurant);
             TextView txtName = (TextView) view.findViewById(R.id.txtName);
-            TextView txtReview = (TextView) view.findViewById(R.id.txtAddress);
+            RatingBar txtReview = (RatingBar) view.findViewById(R.id.ratingBarReview);
             TextView txtCategory = (TextView) view.findViewById(R.id.txtCategory);
             TextView txtAddress = (TextView) view.findViewById(R.id.txtAddress);
             txtName.setText(businessInfoList.get(i).getName());
-            txtReview.setText(businessInfoList.get(i).getRating().toString());
+            //txtReview.setText(String.valueOf(businessInfoList.get(i).getRating()));
+            txtReview.setEnabled(false);
+            txtReview.setMax(5);
+            txtReview.setStepSize(0.01f);
+            txtReview.setRating(Float.parseFloat(String.valueOf(businessInfoList.get(i).getRating())));
+            txtReview.invalidate();
             txtCategory.setText(businessInfoList.get(i).getCategory());
             txtAddress.setText(businessInfoList.get(i).getAddress());
 

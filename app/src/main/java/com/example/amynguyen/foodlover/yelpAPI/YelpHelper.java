@@ -31,7 +31,7 @@ public class YelpHelper {
     Boolean openNow = true;
     Double radius = 0.00;
     String location = null;
-    String coordinate = null;
+    String coordinate = "49.20390,-122.91308";
 
     public YelpHelper() {
         this.connect = new RapidApiConnect(APP_NAME, APP_ID);
@@ -44,6 +44,7 @@ public class YelpHelper {
         if(location == null && coordinate == null) return null;
         if(location != null) body.put("location", new Argument("data", location));
         else body.put("coordinate", new Argument("data", coordinate));
+        System.out.println("sadfadsfasf422");
         body.put("term", new Argument("data", term));
         body.put("openNow", new Argument("data", String.valueOf(openNow)));
         if(radius > 0 ) body.put("radius", new Argument("data", String.valueOf(radius)));

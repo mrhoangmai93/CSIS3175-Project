@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -43,6 +44,7 @@ import static android.content.Context.LOCATION_SERVICE;
 
 public class SearchFragment extends android.support.v4.app.Fragment implements LocationListener {
     View mainView;
+    EditText distanceInput;
     BusinessLineItemAdapter myAdapter;
     NoScrollListView myList;
     ArrayList<Business> businessInfo = new ArrayList<Business>();
@@ -53,14 +55,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
             ACCESS_COARSE_LOCATION
     };
 
-    public void addResult() {
-        businessInfo.add(new Business("a", "b", "c", 3.0,
-                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
-        businessInfo.add(new Business("d", "b", "c", 3.0,
-                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
-        businessInfo.add(new Business("e", "b", "c", 3.0,
-                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
-    }
+
     private static final int LOCATION_REQUEST=1340;
     YelpHelper yelpHelper = new YelpHelper();
     @Nullable
@@ -68,6 +63,8 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         mainView = view;
+        distanceInput = (EditText) view.findViewById(R.id.editTextDistance);
+        distanceInput.setFocusable(false);
         search(view);
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         return view;
@@ -80,8 +77,8 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
             @Override
             public void onClick(View view) {
                 locationSearch.setVisibility(view.VISIBLE);
-                getBusinessList();
                 foodSearch.onActionViewExpanded();
+                getBusinessList();
                 locationSearch.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -98,14 +95,13 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
 
             }
         });
-        // addResult();
+
         myList = (NoScrollListView) mainView.findViewById(R.id.listViewResult);
         myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
 
 
        NoScrollListView myList = (NoScrollListView) view.findViewById(R.id.listViewResult);
-        addResult();
-        BusinessLineItemAdapter myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
+
         myList.setAdapter(myAdapter);
 
     }
@@ -159,7 +155,8 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
             // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
             if(location != null) {
                 String coordinate = location.getLatitude() + "," + location.getLongitude();
-                yelpHelper.setCoordinate(coordinate);
+                // yelpHelper.setCoordinate(coordinate);
+                yelpHelper.setCoordinate(String.valueOf("49.20390,-122.91308"));
             }
             // Print// create Yelp Helper instance
             final Handler handler = new Handler(Looper.getMainLooper());
@@ -169,28 +166,31 @@ public class SearchFragment extends android.support.v4.app.Fragment implements L
                     // execute command
                     ArrayList<Business> testList = new ArrayList<>();
                     JsonObject result = yelpHelper.getBusinessQuery();
-                    JsonArray arr = result.getAsJsonArray("businesses");
-                    for (JsonElement pa : arr) {
-                        JsonObject business = pa.getAsJsonObject();
-                        String     name     = business.get("name").getAsString();
-                        JsonObject     location = business.get("location").getAsJsonObject();
-                        String address = location.get("address1").getAsString();
-                        JsonArray     categories     = business.get("categories").getAsJsonArray();
-                        JsonObject categoryObject = categories.get(0).getAsJsonObject();
-                        String category = categoryObject.get("title").getAsString();
-                        Double rating = business.get("rating").getAsDouble();
-                        String imageURL = business.get("image_url").getAsString();
-                        testList.add(new Business(name, address, category, rating, imageURL));
-                        System.out.println("Name:" + name +"," + "category:" + category);
-                    }
-                    final ArrayList<Business> finishList = testList;
-                    // myAdapter.refresAdapter(businessInfo);
-                    handler.post(new Runnable(){
-                        public void run() {
-                            myAdapter.refresAdapter(finishList);
-                            // System.out.println("Tao day");
+                    System.out.println(yelpHelper.getCoordinate());
+                    if(result != null) {
+                        JsonArray arr = result.getAsJsonArray("businesses");
+                        for (JsonElement pa : arr) {
+                            JsonObject business = pa.getAsJsonObject();
+                            String name = business.get("name").getAsString();
+                            JsonObject location = business.get("location").getAsJsonObject();
+                            String address = location.get("address1").getAsString();
+                            JsonArray categories = business.get("categories").getAsJsonArray();
+                            JsonObject categoryObject = categories.get(0).getAsJsonObject();
+                            String category = categoryObject.get("title").getAsString();
+                            Double rating = business.get("rating").getAsDouble();
+                            String imageURL = business.get("image_url").getAsString();
+                            testList.add(new Business(name, address, category, rating, imageURL));
+                            System.out.println("Name:" + name + "," + "rating:" + rating);
                         }
-                    });
+                        final ArrayList<Business> finishList = testList;
+                        // myAdapter.refresAdapter(businessInfo);
+                        handler.post(new Runnable() {
+                            public void run() {
+                                myAdapter.refresAdapter(finishList);
+                                // System.out.println("Tao day");
+                            }
+                        });
+                    }
                 }
             };
             new Thread(runnable).start();

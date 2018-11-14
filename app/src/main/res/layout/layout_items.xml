@@ -58,14 +58,17 @@
         </TableRow>
 
         <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="111dp"
+            android:layout_height="wrap_content">
+            <android.support.constraint.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/txtReview"
-                android:padding="3dip"
-                android:text="Review"
-                android:textSize="12sp" />
+                <RatingBar
+                    android:id="@+id/ratingBarReview"
+
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent" /></android.support.constraint.ConstraintLayout>
+
         </TableRow>
 
         <TableRow
