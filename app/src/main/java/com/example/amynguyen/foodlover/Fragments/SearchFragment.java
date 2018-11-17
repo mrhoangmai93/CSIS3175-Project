@@ -1,39 +1,28 @@
 package com.example.amynguyen.foodlover.Fragments;
 
-import android.app.Fragment;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.amynguyen.foodlover.Adapters.BusinessLineItemAdapter;
-import com.example.amynguyen.foodlover.CustomListView.NoScrollListView;
+import com.example.amynguyen.foodlover.CustomView.NoScrollListView;
+import com.example.amynguyen.foodlover.CustomView.ScrollViewExt;
+import com.example.amynguyen.foodlover.Interfaces.ScrollViewListener;
 import com.example.amynguyen.foodlover.Models.Business;
 import com.example.amynguyen.foodlover.R;
 import com.example.amynguyen.foodlover.yelpAPI.YelpHelper;
@@ -42,39 +31,38 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
 
-public class SearchFragment extends android.support.v4.app.Fragment {
+public class SearchFragment extends android.support.v4.app.Fragment implements ScrollViewListener {
     View mainView;
     EditText distanceInput;
     ImageView favorite;
     BusinessLineItemAdapter myAdapter;
     NoScrollListView myList;
-    int totalItemCount = 30;
+    //int totalItemCount;
     ArrayList<Business> businessInfo = new ArrayList<Business>();
     private TextView mTextMessage;
     private LocationManager mLocationManager;
     SearchView locationSearch;
     SearchView foodSearch;
-    private static final String[] LOCATION_PERMS={
+    private static final String[] LOCATION_PERMS = {
             ACCESS_FINE_LOCATION,
             ACCESS_COARSE_LOCATION
     };
 
     public Handler mHandler;
     public View footView;
+    ScrollViewExt scroll;
     public boolean isLoading = false;
-    public int currentId = 20;
+    public int offset = 2;
 
-
-    private static final int LOCATION_REQUEST=1340;
+    private static final int LOCATION_REQUEST = 1340;
     YelpHelper yelpHelper = new YelpHelper();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -82,7 +70,7 @@ public class SearchFragment extends android.support.v4.app.Fragment {
         mainView = view;
 
         footView = inflater.inflate(R.layout.footer_view, null);
-        mHandler = new MyHandler();
+        // mHandler = new MyHandler();
 
         distanceInput = (EditText) view.findViewById(R.id.editTextDistance);
         distanceInput.setFocusable(false);
@@ -102,15 +90,19 @@ public class SearchFragment extends android.support.v4.app.Fragment {
         return view;
     }
 
-    public void search(View view)    {
+    public void search(View view) {
         locationSearch = (SearchView) view.findViewById(R.id.searchViewLocation);
         foodSearch = (SearchView) view.findViewById(R.id.searchViewRestaurant);
         final Button btnSearch = (Button) view.findViewById(R.id.btnSearch);
 
+        // Set scroll view listener
+        scroll = (ScrollViewExt) view.findViewById(R.id.scrollView);
+        scroll.setScrollViewListener(this);
+
         // Set adapter for result
         myList = (NoScrollListView) mainView.findViewById(R.id.listViewResult);
-        myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
-        myList.setAdapter(myAdapter);
+        //myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
+        // myList.setAdapter(myAdapter);
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -118,7 +110,8 @@ public class SearchFragment extends android.support.v4.app.Fragment {
                 favorite.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        favorite.setImageResource(R.drawable.ic_favorite); }
+                        favorite.setImageResource(R.drawable.ic_favorite);
+                    }
 
                 });
             }
@@ -136,7 +129,6 @@ public class SearchFragment extends android.support.v4.app.Fragment {
                 getBusinessList();
             }
         });
-
 
 
         // Expand location search when foodSearch on focus
@@ -164,62 +156,91 @@ public class SearchFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        myList.setOnScrollListener(new AbsListView.OnScrollListener() {
+        /*myList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
 
             }
 
             @Override
-            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
-                if(absListView.getLastVisiblePosition() == totalItemCount - 1
-                        && myList.getCount() >= 20 && isLoading == false)   {
-                    isLoading = true;
-
-                    Thread thread = new ThreadGetMoreData();
-                    thread.start();
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (isLoading) {
+                    if (totalItemCount > previousTotal) {
+                        // the loading has finished
+                        isLoading = false;
+                        previousTotal = totalItemCount;
+                    }
                 }
-            }
-        });
+                System.out.println("visibleItemcount " + visibleItemCount + firstVisibleItem);
+                System.out.println("totalItemCount " + totalItemCount);
+                // check if the List needs more data
+                if (!isLoading && ((firstVisibleItem + visibleItemCount) >= (totalItemCount + offset))) {
+                    isLoading = true;
+                    myList.addFooterView(footView);
 
+// List needs more data. Go fetch !!
+                    getMoreData();
+                }
+
+*//*                if(absListView.getLastVisiblePosition() == totalItemCount - 1
+                        && myList.getCount() >= offset && isLoading == false)   {
+                    isLoading = true;
+                    // Add loading bar
+                    myList.addFooterView(footView);
+
+                    // Get more data from yelp
+
+                    getMoreData();*//*
+                // Thread thread = new ThreadGetMoreData();
+                // thread.start();
+*//*            }
+        }
+    });*//*
+
+            }
+        });*/
     }
+
     public void getBusinessList() {
         try {
             // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
             // Get last known location
-            Criteria c=new Criteria();
+            Criteria c = new Criteria();
             //if we pass false than
             //it will check first satellite location than Internet and than Sim Network
-            String provider=mLocationManager.getBestProvider(c, false);
+            String provider = mLocationManager.getBestProvider(c, false);
             Location location = mLocationManager.getLastKnownLocation(provider);
             //Location location = getLastKnownLocation();
             // Execute if its the first location
             // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
             // System.out.println(location);
 
+            // Reset offset
+            yelpHelper.setOffset(0);
             // Set restaurant query
             yelpHelper.setTerm(foodSearch.getQuery().toString());
             // Set location
-            if(location != null) {
+            if (location != null) {
                 String coordinate = location.getLatitude() + ", " + location.getLongitude();
                 yelpHelper.setCoordinate(coordinate);
                 //yelpHelper.setCoordinate("49.20390,-122.91308");
-               // System.out.println(coordinate);
+                // System.out.println(coordinate);
             }
-            if(!locationSearch.getQuery().toString().equals("")) yelpHelper.setLocation("");
+            if (!locationSearch.getQuery().toString().equals("")) yelpHelper.setLocation("");
             else yelpHelper.setLocation(locationSearch.getQuery().toString());
 
             // Print// create Yelp Helper instance
             final Handler handler = new Handler(Looper.getMainLooper());
-           Runnable runnable = new Runnable() {
+            Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
                     // execute command
                     ArrayList<Business> testList = new ArrayList<>();
                     JsonObject result = yelpHelper.getBusinessQuery();
                     // System.out.println(yelpHelper.getCoordinate());
-                    if(result != null) {
+                    if (result != null) {
                         JsonArray arr = result.getAsJsonArray("businesses");
+                        //totalItemCount = result.getAsJsonObject().get("total").getAsInt();
                         for (JsonElement pa : arr) {
                             testList.add(getBusinessFromJson(pa));
                             // System.out.println("Name:" + name + ", " + "rating:" + rating);
@@ -246,13 +267,13 @@ public class SearchFragment extends android.support.v4.app.Fragment {
 
     public Business getBusinessFromJson(JsonElement pa) {
         Business businessObj = null;
-        if(pa != null) {
+        if (pa != null) {
             String category = "";
             String address = "";
             JsonObject business = pa.getAsJsonObject();
             String name = business.get("name").getAsString();
             JsonObject location = business.get("location").getAsJsonObject();
-            if(location.get("address1") != null) {
+            if (location.get("address1") != null) {
                 address = location.get("address1").getAsString()
                         + ", " + location.get("city").getAsString()
                         + ", " + location.get("state").getAsString();
@@ -268,12 +289,13 @@ public class SearchFragment extends android.support.v4.app.Fragment {
             Double rating = business.get("rating").getAsDouble();
             String imageURL = business.get("image_url").getAsString();
             businessObj = new Business(name, address, category, rating, imageURL);
-            // System.out.println("name" + name);
+            System.out.println("name" + name);
             businessObj.setDistanceFromCurrentLocation(String.valueOf(Math.round((business.get("distance").getAsDouble() * 0.001) * 100.0) / 100.0) + " km");
         }
         return businessObj;
 
     }
+
     private Location getLastKnownLocation() {
         Location bestLocation = null;
         try {
@@ -290,12 +312,12 @@ public class SearchFragment extends android.support.v4.app.Fragment {
                 }
             }
         } catch (SecurityException ex) {
-        System.out.println(ex);
-    }
+            System.out.println(ex);
+        }
         return bestLocation;
     }
 
-    public class MyHandler extends Handler {
+/*    public class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what)   {
@@ -314,20 +336,68 @@ public class SearchFragment extends android.support.v4.app.Fragment {
 
             }
         }
+    }*/
+
+    private void getMoreData() {
+        // Set offset
+        // System.out.println("Offet: " +offset);
+        yelpHelper.setOffset(offset);
+        // Print// create Yelp Helper instance
+        final Handler handler = new Handler(Looper.getMainLooper());
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                // execute command
+                ArrayList<Business> testList = new ArrayList<>();
+                JsonObject result = yelpHelper.getBusinessQuery();
+                // System.out.println(yelpHelper.getCoordinate());
+                if (result != null) {
+                    JsonArray arr = result.getAsJsonArray("businesses");
+                    //totalItemCount = result.getAsJsonObject().get("total").getAsInt();
+                    for (JsonElement pa : arr) {
+                        testList.add(getBusinessFromJson(pa));
+                        // System.out.println("Name:" + name + ", " + "rating:" + rating);
+                    }
+                    final ArrayList<Business> finishList = testList;
+                    // myAdapter.refresAdapter(businessInfo);
+                    handler.post(new Runnable() {
+                        public void run() {
+                            myAdapter.addListItemToAdapter(finishList);
+                            System.out.println("ListCount: " + finishList.size());
+                            myList.removeFooterView(footView);
+                            isLoading = false;
+                            offset += 20;
+                            myAdapter.notifyDataSetChanged();
+                            // myAdapter =
+                            //
+                            // new BusinessLineItemAdapter(finishList, getContext());
+                            // myList.setAdapter(myAdapter);
+                            // System.out.println("Tao day");
+                        }
+
+
+                    });
+                }
+            }
+        };
+        new Thread(runnable).start();
     }
 
-    private List<Business> getMoreData()   {
-        List<Business> lst = new ArrayList<>();
-        lst.add(new Business("a", "b", "c", 3.0,
-                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
-        lst.add(new Business("d", "b", "c", 3.0,
-                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
-        lst.add(new Business("e", "b", "c", 3.0,
-                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
-        return lst;
+    @Override
+    public void onScrollChanged(ScrollViewExt scrollView, int x, int y, int oldx, int oldy) {
+        // We take the last son in the scrollview
+        View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
+        int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
+
+        // if diff is zero, then the bottom has been reached
+        if (diff == 0 && !isLoading) {
+            isLoading = true;
+            myList.addFooterView(footView);
+            getMoreData();
+        }
     }
 
-    public class ThreadGetMoreData extends Thread   {
+/*    public class ThreadGetMoreData extends Thread   {
         @Override
         public void run() {
             mHandler.sendEmptyMessage(0);
@@ -345,9 +415,8 @@ public class SearchFragment extends android.support.v4.app.Fragment {
             mHandler.sendMessage(msg);
 
         }
-    }
+    }*/
 }
-
 
 
 //ActivityCompat.checkSelfPermission(getActivity(),perm));

@@ -32,6 +32,8 @@ public class YelpHelper {
     Double radius = 0.00;
     String location = "";
     String coordinate = "";
+    int offset = 0;
+    int limit = 2;
 
     public YelpHelper() {
         this.connect = new RapidApiConnect(APP_NAME, APP_ID);
@@ -47,7 +49,9 @@ public class YelpHelper {
         // body.put("coordinate", new Argument("data", coordinate));
         // System.out.println(location);
         body.put("term", new Argument("data", term));
+        if(offset != 0) body.put("offset", new Argument("data", String.valueOf(offset)));
         body.put("openNow", new Argument("data", String.valueOf(openNow)));
+        body.put("limit", new Argument("data", String.valueOf(limit)));
         if(radius > 0 ) body.put("radius", new Argument("data", String.valueOf(radius)));
         try {
             Map<String, Object> response = connect.call("YelpAPI", "getBusinesses", body);
@@ -108,5 +112,12 @@ public class YelpHelper {
         this.coordinate = coordinate;
     }
 
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
 
 }

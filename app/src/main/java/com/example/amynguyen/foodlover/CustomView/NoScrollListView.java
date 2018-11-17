@@ -1,4 +1,4 @@
-package com.example.amynguyen.foodlover.CustomListView;
+package com.example.amynguyen.foodlover.CustomView;
 
 import android.content.Context;
 import android.util.AttributeSet;

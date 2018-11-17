@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.example.amynguyen.foodlover.CustomListView.NoScrollListView
+        <com.example.amynguyen.foodlover.CustomView.NoScrollListView
             android:id="@+id/listViewRecent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

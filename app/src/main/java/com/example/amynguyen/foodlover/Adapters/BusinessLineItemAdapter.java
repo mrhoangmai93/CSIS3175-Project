@@ -22,13 +22,35 @@ public class BusinessLineItemAdapter extends BaseAdapter {
     Context context;
 
     public BusinessLineItemAdapter(List<Business> businessInfo, Context context)   {
-        businessInfoList = businessInfo;
+         businessInfoList = businessInfo;
+/*        for(Business bus : businessInfoList) {
+            System.out.println("result #" + bus.getName());
+        }*/
+/*        businessInfoList = new ArrayList<>();
+        businessInfoList.add(new Business("asdasd", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd2", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd3", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd4", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd5", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd2", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd3", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd4", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd5", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd2", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd3", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd4", "asdasd", "asdsad", 3.5, "http://google.com"));
+        businessInfoList.add(new Business("asdasd5", "asdasd", "asdsad", 3.5, "http://google.com"));*/
         this.context = context;
     }
 
     public void addListItemToAdapter(List<Business> list)  {
+        // System.out.println("Thang dau tien:" + list.get(0).getName());
         businessInfoList.addAll(list);
-        this.notifyDataSetChanged();
+        // System.out.println("Thang 21: " + businessInfoList.get(20).getName());
+
+        // this.notifyDataSetChanged();
     }
 
     @Override
@@ -49,6 +71,7 @@ public class BusinessLineItemAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup parent) {
         if(view == null) {
+            System.out.println("Thang so " + i + " ten la :"  + businessInfoList.get(i).getName()) ;
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             view = layoutInflater.inflate(R.layout.layout_items, parent, false);
 
