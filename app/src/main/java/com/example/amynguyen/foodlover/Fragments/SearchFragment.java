@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -54,6 +56,7 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     ImageView favorite;
     BusinessLineItemAdapter myAdapter;
     NoScrollListView myList;
+    int totalItemCount = 30;
     ArrayList<Business> businessInfo = new ArrayList<Business>();
     private TextView mTextMessage;
     private LocationManager mLocationManager;
@@ -64,6 +67,11 @@ public class SearchFragment extends android.support.v4.app.Fragment {
             ACCESS_COARSE_LOCATION
     };
 
+    public Handler mHandler;
+    public View footView;
+    public boolean isLoading = false;
+    public int currentId = 20;
+
 
     private static final int LOCATION_REQUEST=1340;
     YelpHelper yelpHelper = new YelpHelper();
@@ -72,6 +80,9 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         mainView = view;
+
+        footView = inflater.inflate(R.layout.footer_view, null);
+        mHandler = new MyHandler();
 
         distanceInput = (EditText) view.findViewById(R.id.editTextDistance);
         distanceInput.setFocusable(false);
@@ -153,7 +164,23 @@ public class SearchFragment extends android.support.v4.app.Fragment {
             }
         });
 
+        myList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
 
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+                if(absListView.getLastVisiblePosition() == totalItemCount - 1
+                        && myList.getCount() >= 20 && isLoading == false)   {
+                    isLoading = true;
+
+                    Thread thread = new ThreadGetMoreData();
+                    thread.start();
+                }
+            }
+        });
 
     }
     public void getBusinessList() {
@@ -267,6 +294,60 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     }
         return bestLocation;
     }
+
+    public class MyHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what)   {
+                case 0:
+                    myList.addFooterView(footView);
+                    break;
+                case 1:
+                    myAdapter.addListItemToAdapter((List<Business>)msg.obj);
+                    myList.removeFooterView(footView);
+                    isLoading = false;
+                    break;
+
+                default:
+                    break;
+
+
+            }
+        }
+    }
+
+    private List<Business> getMoreData()   {
+        List<Business> lst = new ArrayList<>();
+        lst.add(new Business("a", "b", "c", 3.0,
+                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
+        lst.add(new Business("d", "b", "c", 3.0,
+                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
+        lst.add(new Business("e", "b", "c", 3.0,
+                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
+        return lst;
+    }
+
+    public class ThreadGetMoreData extends Thread   {
+        @Override
+        public void run() {
+            mHandler.sendEmptyMessage(0);
+
+            List<Business> lstResult = getMoreData();
+            try
+            {
+                Thread.sleep(3000);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            Message msg = mHandler.obtainMessage(1, lstResult);
+            mHandler.sendMessage(msg);
+
+        }
+    }
 }
+
+
 
 //ActivityCompat.checkSelfPermission(getActivity(),perm));

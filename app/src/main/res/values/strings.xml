@@ -13,6 +13,7 @@
     <string name="startImgDescription">Img Start</string>
     <string name="imgRestaurant">restaurant image</string>
     <string name="favoriteIcon">Favorite List Added</string>
+    <string name="txtImgDesOpenClose">Open Close Restaurant</string>
     <string-array name="sortBy">
         <item>Price</item>
         <item>Best Match</item>
