@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -56,6 +57,8 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     ArrayList<Business> businessInfo = new ArrayList<Business>();
     private TextView mTextMessage;
     private LocationManager mLocationManager;
+    SearchView locationSearch;
+    SearchView foodSearch;
     private static final String[] LOCATION_PERMS={
             ACCESS_FINE_LOCATION,
             ACCESS_COARSE_LOCATION
@@ -89,14 +92,49 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     }
 
     public void search(View view)    {
-        final SearchView locationSearch = (SearchView) view.findViewById(R.id.searchViewLocation);
-        final SearchView foodSearch = (SearchView) view.findViewById(R.id.searchViewRestaurant);
+        locationSearch = (SearchView) view.findViewById(R.id.searchViewLocation);
+        foodSearch = (SearchView) view.findViewById(R.id.searchViewRestaurant);
+        final Button btnSearch = (Button) view.findViewById(R.id.btnSearch);
+
+        // Set adapter for result
+        myList = (NoScrollListView) mainView.findViewById(R.id.listViewResult);
+        myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
+        myList.setAdapter(myAdapter);
+        myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                favorite = (ImageView) view.findViewById(R.id.imageViewFavorite);
+                favorite.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        favorite.setImageResource(R.drawable.ic_favorite); }
+
+                });
+            }
+        });
+
+
+        // Set listener
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //System.out.println("dkm");
+                //System.out.println(foodSearch.getQuery().toString().equals(""));
+                // if(foodSearch.getQuery().toString() == "") Toast.makeText(view.getContext(), "dfsdfsdf", Toast.LENGTH_SHORT).show();
+                // else getBusinessList();
+                getBusinessList();
+            }
+        });
+
+
+
+        // Expand location search when foodSearch on focus
         foodSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 locationSearch.setVisibility(view.VISIBLE);
                 foodSearch.onActionViewExpanded();
-                getBusinessList();
+                // getBusinessList();
 
                 locationSearch.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -112,29 +150,6 @@ public class SearchFragment extends android.support.v4.app.Fragment {
             public void onFocusChange(View view, boolean b) {
                 locationSearch.setVisibility(view.VISIBLE);
 
-            }
-        });
-
-        myList = (NoScrollListView) mainView.findViewById(R.id.listViewResult);
-
-        myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
-
-
-        myList.setAdapter(myAdapter);
-
-
-        myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                favorite = (ImageView) view.findViewById(R.id.imageViewFavorite);
-
-                    favorite.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                            favorite.setImageResource(R.drawable.ic_favorite); }
-
-                    });
             }
         });
 
@@ -154,11 +169,19 @@ public class SearchFragment extends android.support.v4.app.Fragment {
             // Execute if its the first location
             // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
             // System.out.println(location);
+
+            // Set restaurant query
+            yelpHelper.setTerm(foodSearch.getQuery().toString());
+            // Set location
             if(location != null) {
-                String coordinate = location.getLatitude() + "," + location.getLongitude();
-                // yelpHelper.setCoordinate(coordinate);
-                yelpHelper.setCoordinate("49.20390,-122.91308");
+                String coordinate = location.getLatitude() + ", " + location.getLongitude();
+                yelpHelper.setCoordinate(coordinate);
+                //yelpHelper.setCoordinate("49.20390,-122.91308");
+               // System.out.println(coordinate);
             }
+            if(!locationSearch.getQuery().toString().equals("")) yelpHelper.setLocation("");
+            else yelpHelper.setLocation(locationSearch.getQuery().toString());
+
             // Print// create Yelp Helper instance
             final Handler handler = new Handler(Looper.getMainLooper());
            Runnable runnable = new Runnable() {
@@ -178,8 +201,11 @@ public class SearchFragment extends android.support.v4.app.Fragment {
                         // myAdapter.refresAdapter(businessInfo);
                         handler.post(new Runnable() {
                             public void run() {
-                                myAdapter.refresAdapter(finishList);
-                                // System.out.println("Tao day");
+                                //myAdapter.refresAdapter(finishList);
+                                // myAdapter.notifyDataSetChanged();
+                                myAdapter = new BusinessLineItemAdapter(finishList, getContext());
+                                myList.setAdapter(myAdapter);
+                                System.out.println("Tao day");
                             }
                         });
                     }
@@ -192,28 +218,34 @@ public class SearchFragment extends android.support.v4.app.Fragment {
     }
 
     public Business getBusinessFromJson(JsonElement pa) {
-        String category = "";
-        String address = "";
-        JsonObject business = pa.getAsJsonObject();
-        String name = business.get("name").getAsString();
-        JsonObject location = business.get("location").getAsJsonObject();
-        address = location.get("address1").getAsString()
-                + ", " + location.get("city").getAsString()
-                + ", " + location.get("state").getAsString();
+        Business businessObj = null;
+        if(pa != null) {
+            String category = "";
+            String address = "";
+            JsonObject business = pa.getAsJsonObject();
+            String name = business.get("name").getAsString();
+            JsonObject location = business.get("location").getAsJsonObject();
+            if(location.get("address1") != null) {
+                address = location.get("address1").getAsString()
+                        + ", " + location.get("city").getAsString()
+                        + ", " + location.get("state").getAsString();
                 //+ ", " + location.get("zip_code").getAsString()
                 //+ ", " + location.get("country").getAsString();
-        JsonArray categories = business.get("categories").getAsJsonArray();
-        for (JsonElement ca : categories) {
-            JsonObject caObj = ca.getAsJsonObject();
-            category += caObj.get("title").getAsString() + ", ";
+            }
+            JsonArray categories = business.get("categories").getAsJsonArray();
+            for (JsonElement ca : categories) {
+                JsonObject caObj = ca.getAsJsonObject();
+                category += caObj.get("title").getAsString() + ", ";
+            }
+            category = category.substring(0, category.length() - 1);
+            Double rating = business.get("rating").getAsDouble();
+            String imageURL = business.get("image_url").getAsString();
+            businessObj = new Business(name, address, category, rating, imageURL);
+            // System.out.println("name" + name);
+            businessObj.setDistanceFromCurrentLocation(String.valueOf(Math.round((business.get("distance").getAsDouble() * 0.001) * 100.0) / 100.0) + " km");
         }
-        category = category.substring(0, category.length() - 1);
-        Double rating = business.get("rating").getAsDouble();
-        String imageURL = business.get("image_url").getAsString();
-        Business businessObj = new Business(name, address, category, rating, imageURL);
-        System.out.println(business.get("distance").getAsDouble() * 0.001);
-        businessObj.setDistanceFromCurrentLocation(String.valueOf(Math.round((business.get("distance").getAsDouble() * 0.001) * 100.0) / 100.0) + " km");
         return businessObj;
+
     }
     private Location getLastKnownLocation() {
         Location bestLocation = null;

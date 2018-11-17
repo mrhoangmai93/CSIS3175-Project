@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BusinessLineItemAdapter extends BaseAdapter {
-    List<Business> businessInfoList = new ArrayList<>();
+    List<Business> businessInfoList;
     Context context;
 
     public BusinessLineItemAdapter(List<Business> businessInfo, Context context)   {
@@ -73,6 +73,7 @@ public class BusinessLineItemAdapter extends BaseAdapter {
     public synchronized void refresAdapter(ArrayList<Business> busisnesses) {
         businessInfoList.clear();
         businessInfoList.addAll(busisnesses);
-        this.notifyDataSetChanged();
+        // System.out.println(businessInfoList.get(0).getName());
+        notifyDataSetChanged();
     }
 }
