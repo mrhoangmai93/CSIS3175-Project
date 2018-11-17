@@ -12,6 +12,7 @@
     <string name="txtSortBy">Sort By</string>
     <string name="startImgDescription">Img Start</string>
     <string name="imgRestaurant">restaurant image</string>
+    <string name="favoriteIcon">Favorite List Added</string>
     <string-array name="sortBy">
         <item>Price</item>
         <item>Best Match</item>

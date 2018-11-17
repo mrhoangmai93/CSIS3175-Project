@@ -2,6 +2,7 @@ package com.example.amynguyen.foodlover.Fragments;
 
 import android.app.Fragment;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -95,6 +97,7 @@ public class SearchFragment extends android.support.v4.app.Fragment {
                 locationSearch.setVisibility(view.VISIBLE);
                 foodSearch.onActionViewExpanded();
                 getBusinessList();
+
                 locationSearch.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -113,18 +116,28 @@ public class SearchFragment extends android.support.v4.app.Fragment {
         });
 
         myList = (NoScrollListView) mainView.findViewById(R.id.listViewResult);
+
         myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
 
 
         myList.setAdapter(myAdapter);
+
+
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 favorite = (ImageView) view.findViewById(R.id.imageViewFavorite);
 
-                    favorite.setImageResource(R.drawable.ic_favorite);
+                    favorite.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            favorite.setImageResource(R.drawable.ic_favorite); }
+
+                    });
             }
         });
+
 
 
     }
@@ -199,7 +212,7 @@ public class SearchFragment extends android.support.v4.app.Fragment {
         String imageURL = business.get("image_url").getAsString();
         Business businessObj = new Business(name, address, category, rating, imageURL);
         System.out.println(business.get("distance").getAsDouble() * 0.001);
-        businessObj.setDistanceFromCurrentLocation(String.valueOf(Math.round((business.get("distance").getAsDouble() * 0.001) * 100.0) / 100.0) + "km");
+        businessObj.setDistanceFromCurrentLocation(String.valueOf(Math.round((business.get("distance").getAsDouble() * 0.001) * 100.0) / 100.0) + " km");
         return businessObj;
     }
     private Location getLastKnownLocation() {
