@@ -12,8 +12,6 @@ import android.widget.TextView;
 import com.example.amynguyen.foodlover.Models.Business;
 import com.example.amynguyen.foodlover.R;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 

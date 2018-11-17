@@ -1,12 +1,20 @@
 package com.example.amynguyen.foodlover.Fragments;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.customtabs.CustomTabsIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +30,7 @@ import android.widget.TextView;
 import com.example.amynguyen.foodlover.Adapters.BusinessLineItemAdapter;
 import com.example.amynguyen.foodlover.CustomView.NoScrollListView;
 import com.example.amynguyen.foodlover.CustomView.ScrollViewExt;
+import com.example.amynguyen.foodlover.Database.MyDBHandler;
 import com.example.amynguyen.foodlover.Interfaces.ScrollViewListener;
 import com.example.amynguyen.foodlover.Models.Business;
 import com.example.amynguyen.foodlover.R;
@@ -38,6 +47,8 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
 
 public class SearchFragment extends android.support.v4.app.Fragment implements ScrollViewListener {
+
+    Dialog myDialog;
     View mainView;
     EditText distanceInput;
     ImageView favorite;
@@ -53,12 +64,21 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
             ACCESS_FINE_LOCATION,
             ACCESS_COARSE_LOCATION
     };
+    CustomTabsIntent.Builder builder;
+    CustomTabsIntent customTabsIntent;
+
 
     public Handler mHandler;
     public View footView;
     ScrollViewExt scroll;
     public boolean isLoading = false;
     public int offset = 2;
+    Button btnView;
+    Button btnFavorite;
+
+    MyDBHandler db;
+    Business currentItem;
+
 
     private static final int LOCATION_REQUEST = 1340;
     YelpHelper yelpHelper = new YelpHelper();
@@ -68,6 +88,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         mainView = view;
+        MyDBHandler db;
 
         footView = inflater.inflate(R.layout.footer_view, null);
         // mHandler = new MyHandler();
@@ -80,6 +101,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                 distanceInput.setFocusableInTouchMode(true);
             }
         });
+
 
         search(view);
         //favorite = (ImageView) view.findViewById(R.id.imageViewFavorite);
@@ -105,18 +127,41 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
         // myList.setAdapter(myAdapter);
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
                 favorite = (ImageView) view.findViewById(R.id.imageViewFavorite);
-                favorite.setOnClickListener(new View.OnClickListener() {
+                myDialog = new Dialog(getContext());
+                myDialog.setContentView(R.layout.popup_view);
+                myDialog.show();
+                currentItem = (Business) myAdapter.getItem(position);
+
+                //create database
+                db = new MyDBHandler(getContext());
+
+                btnView = myDialog.findViewById(R.id.buttonView);
+                btnFavorite = myDialog.findViewById(R.id.buttonFavorite);
+                btnView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        favorite.setImageResource(R.drawable.ic_favorite);
-                    }
+                        //how to get the position
+                        builder = new CustomTabsIntent.Builder();
+                        customTabsIntent = builder.build();
+                        customTabsIntent.launchUrl(getContext(), Uri.parse(currentItem.getImgURL()));
 
+                    }
+                });
+
+                btnFavorite.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        favorite.setImageResource(R.drawable.ic_favorite);
+                        db.addToFavorite(myAdapter, position);
+                        //System.out.println("Result" + db.loadFavorite());
+
+                    }
                 });
             }
         });
-
 
         // Set listener
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -363,6 +408,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                     handler.post(new Runnable() {
                         public void run() {
                             myAdapter.addListItemToAdapter(finishList);
+
                             System.out.println("ListCount: " + finishList.size());
                             myList.removeFooterView(footView);
                             isLoading = false;
@@ -416,6 +462,8 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
 
         }
     }*/
+
+
 }
 
 
