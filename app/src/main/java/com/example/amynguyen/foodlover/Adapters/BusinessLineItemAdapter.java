@@ -26,6 +26,11 @@ public class BusinessLineItemAdapter extends BaseAdapter {
         this.context = context;
     }
 
+    public void addListItemToAdapter(List<Business> list)  {
+        businessInfoList.addAll(list);
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return businessInfoList.size();
