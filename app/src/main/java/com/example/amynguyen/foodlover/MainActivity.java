@@ -25,6 +25,9 @@ import com.example.amynguyen.foodlover.Fragments.SearchFragment;
 import com.example.amynguyen.foodlover.yelpAPI.YelpHelper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         }catch (SecurityException exception) {
             System.out.println(exception);
         }
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(this.getBaseContext()));
     }
 
     @Override

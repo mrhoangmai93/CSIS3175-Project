@@ -1,19 +1,22 @@
 package com.example.amynguyen.foodlover.Models;
 
 public class Business {
+    String businessId;
     String name;
     String address;
     String category;
     Double rating;
     String imgURL;
     String distanceFromCurrentLocation = null;
-    public Business(String name, String address, String category, Double rating, String imgURL)   {
+    public Business(String  businessId, String name, String address, String category, Double rating, String imgURL)   {
+        this.businessId = businessId;
         this.name = name;
         this.address = address;
         this.category = category;
 
         this.rating = rating;
         this.imgURL = imgURL;
+
     }
 
     public String getName() {
@@ -62,5 +65,13 @@ public class Business {
     public void setDistanceFromCurrentLocation(String distanceFromCurrentLocation) {
         this.distanceFromCurrentLocation = distanceFromCurrentLocation;
     }
+    public String getBusinessId() {
+        return businessId;
+    }
+
+    public void setBusinessId(String businessId) {
+        this.businessId = businessId;
+    }
+
 
 }

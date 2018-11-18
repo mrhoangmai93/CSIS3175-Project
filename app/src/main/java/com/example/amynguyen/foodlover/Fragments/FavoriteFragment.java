@@ -17,12 +17,12 @@ import java.util.List;
 public class FavoriteFragment extends android.support.v4.app.Fragment {
     List<Business> businessInfo = new ArrayList<>();
     public void addResult() {
-        businessInfo.add(new Business("a", "b", "c", 3.0,
+/*        businessInfo.add(new Business("a", "b", "c", 3.0,
                 "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
         businessInfo.add(new Business("d", "b", "c", 3.0,
                 "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
         businessInfo.add(new Business("e", "b", "c", 3.0,
-                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
+                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));*/
     }
     @Nullable
     @Override

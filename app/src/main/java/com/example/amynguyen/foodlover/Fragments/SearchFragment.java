@@ -17,6 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.SearchView;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.amynguyen.foodlover.Adapters.BusinessLineItemAdapter;
@@ -30,6 +32,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,23 +47,21 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
     BusinessLineItemAdapter myAdapter;
     NoScrollListView myList;
     //int totalItemCount;
-    ArrayList<Business> businessInfo = new ArrayList<Business>();
-    private TextView mTextMessage;
     private LocationManager mLocationManager;
     SearchView locationSearch;
     SearchView foodSearch;
-    private static final String[] LOCATION_PERMS = {
-            ACCESS_FINE_LOCATION,
-            ACCESS_COARSE_LOCATION
-    };
+    Switch switchOpenNow;
+    Spinner spinnerSortBy;
+    Spinner spinnerOrderBy;
+    int preScrollY = 0;
+    private static final int LOAD_PER_PAGE = 20;
+    private static final int DEFAULT_RADIUS = 3000;
 
-    public Handler mHandler;
     public View footView;
     ScrollViewExt scroll;
     public boolean isLoading = false;
-    public int offset = 2;
-
-    private static final int LOCATION_REQUEST = 1340;
+    public boolean isInitSearch = false;
+    public int offset = LOAD_PER_PAGE;
     YelpHelper yelpHelper = new YelpHelper();
 
     @Nullable
@@ -72,16 +73,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
         footView = inflater.inflate(R.layout.footer_view, null);
         // mHandler = new MyHandler();
 
-        distanceInput = (EditText) view.findViewById(R.id.editTextDistance);
-        distanceInput.setFocusable(false);
-        distanceInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                distanceInput.setFocusableInTouchMode(true);
-            }
-        });
-
-        search(view);
+        initLoad(view);
         //favorite = (ImageView) view.findViewById(R.id.imageViewFavorite);
 
 
@@ -90,10 +82,28 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
         return view;
     }
 
-    public void search(View view) {
+    public void initLoad(View view) {
         locationSearch = (SearchView) view.findViewById(R.id.searchViewLocation);
         foodSearch = (SearchView) view.findViewById(R.id.searchViewRestaurant);
+        switchOpenNow = (Switch) view.findViewById(R.id.switchOpenNow);
+        distanceInput = (EditText) view.findViewById(R.id.editTextDistance);
+        spinnerSortBy = (Spinner) view.findViewById(R.id.spinnerSortBy);
+        spinnerOrderBy = (Spinner) view.findViewById(R.id.spinnerOrderBy);
+
+        switchOpenNow.setChecked(true);
         final Button btnSearch = (Button) view.findViewById(R.id.btnSearch);
+
+
+        foodSearch.setFocusable(true);
+        foodSearch.setIconified(false);
+        foodSearch.requestFocusFromTouch();
+/*        distanceInput.setFocusable(false);
+        distanceInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                distanceInput.setFocusableInTouchMode(true);
+            }
+        });*/
 
         // Set scroll view listener
         scroll = (ScrollViewExt) view.findViewById(R.id.scrollView);
@@ -127,34 +137,33 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                 // if(foodSearch.getQuery().toString() == "") Toast.makeText(view.getContext(), "dfsdfsdf", Toast.LENGTH_SHORT).show();
                 // else getBusinessList();
                 getBusinessList();
+                distanceInput.setFocusableInTouchMode(false);
+                distanceInput.setFocusable(false);
+                distanceInput.setFocusableInTouchMode(true);
+                distanceInput.setFocusable(true);
             }
         });
-
 
         // Expand location search when foodSearch on focus
         foodSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                locationSearch.setVisibility(view.VISIBLE);
+
                 foodSearch.onActionViewExpanded();
                 // getBusinessList();
 
-                locationSearch.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        locationSearch.onActionViewExpanded();
-                    }
-                });
+
             }
         });
-
-        foodSearch.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+        locationSearch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean b) {
-                locationSearch.setVisibility(view.VISIBLE);
+            public void onClick(View view) {
+                locationSearch.onActionViewExpanded();
 
             }
         });
+
+
 
         /*myList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -217,6 +226,19 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
 
             // Reset offset
             yelpHelper.setOffset(0);
+
+            // Get optional parameters
+            yelpHelper.setOpenNow(switchOpenNow.isChecked());
+            if(distanceInput.getText().toString().equals("")) {
+                yelpHelper.setRadius(DEFAULT_RADIUS);
+            }else {
+                int radius = (int) (Integer.parseInt(distanceInput.getText().toString()) * 1609.34);
+                if(radius > 40000) yelpHelper.setRadius(40000);
+                else yelpHelper.setRadius(radius);
+            }
+            yelpHelper.setSortBy(getSortByValue(spinnerSortBy));
+
+            // System.out.println(yelpHelper.getRadius());
             // Set restaurant query
             yelpHelper.setTerm(foodSearch.getQuery().toString());
             // Set location
@@ -253,6 +275,8 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                                 // myAdapter.notifyDataSetChanged();
                                 myAdapter = new BusinessLineItemAdapter(finishList, getContext());
                                 myList.setAdapter(myAdapter);
+                                isLoading = false;
+                                // myList.invalidateViews();
                                 System.out.println("Tao day");
                             }
                         });
@@ -264,7 +288,18 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
             System.out.println(ex);
         }
     }
-
+    public String getSortByValue(Spinner spinner) {
+        switch (spinner.getSelectedItemPosition()) {
+            case 1:
+                return "distance";
+            case 2:
+                return "review_count";
+            case 3:
+                return "rating";
+            default:
+                return "best_match";
+        }
+    }
     public Business getBusinessFromJson(JsonElement pa) {
         Business businessObj = null;
         if (pa != null) {
@@ -272,6 +307,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
             String address = "";
             JsonObject business = pa.getAsJsonObject();
             String name = business.get("name").getAsString();
+            String id = business.get("id").getAsString();
             JsonObject location = business.get("location").getAsJsonObject();
             if (location.get("address1") != null) {
                 address = location.get("address1").getAsString()
@@ -285,18 +321,18 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                 JsonObject caObj = ca.getAsJsonObject();
                 category += caObj.get("title").getAsString() + ", ";
             }
-            category = category.substring(0, category.length() - 1);
+            // System.out.println(name);
+            category = category.substring(0, category.length() - 2);
             Double rating = business.get("rating").getAsDouble();
             String imageURL = business.get("image_url").getAsString();
-            businessObj = new Business(name, address, category, rating, imageURL);
-            System.out.println("name" + name);
+            businessObj = new Business(id, name, address, category, rating, imageURL);
             businessObj.setDistanceFromCurrentLocation(String.valueOf(Math.round((business.get("distance").getAsDouble() * 0.001) * 100.0) / 100.0) + " km");
         }
         return businessObj;
 
     }
 
-    private Location getLastKnownLocation() {
+/*    private Location getLastKnownLocation() {
         Location bestLocation = null;
         try {
             mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
@@ -315,7 +351,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
             System.out.println(ex);
         }
         return bestLocation;
-    }
+    }*/
 
 /*    public class MyHandler extends Handler {
         @Override
@@ -366,8 +402,9 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                             System.out.println("ListCount: " + finishList.size());
                             myList.removeFooterView(footView);
                             isLoading = false;
-                            offset += 20;
+                            offset += LOAD_PER_PAGE;
                             myAdapter.notifyDataSetChanged();
+                            scroll.setScrollY(preScrollY);
                             // myAdapter =
                             //
                             // new BusinessLineItemAdapter(finishList, getContext());
@@ -388,12 +425,14 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
         // We take the last son in the scrollview
         View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
         int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
+        preScrollY = scrollView.getScrollY();
 
         // if diff is zero, then the bottom has been reached
         if (diff == 0 && !isLoading) {
             isLoading = true;
             myList.addFooterView(footView);
             getMoreData();
+
         }
     }
 

@@ -15,8 +15,8 @@
     <string name="favoriteIcon">Favorite List Added</string>
     <string name="txtImgDesOpenClose">Open Close Restaurant</string>
     <string-array name="sortBy">
-        <item>Price</item>
         <item>Best Match</item>
+        <item>Distance</item>
         <item>Review Count</item>
         <item>Rating</item>
     </string-array>

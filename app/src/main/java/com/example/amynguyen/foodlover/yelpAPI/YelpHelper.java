@@ -29,11 +29,12 @@ public class YelpHelper {
 
     String term = "";
     Boolean openNow = true;
-    Double radius = 0.00;
+    int radius = 0;
     String location = "";
+    String sortBy = "best_match";
     String coordinate = "";
     int offset = 0;
-    int limit = 2;
+    int limit = 20;
 
     public YelpHelper() {
         this.connect = new RapidApiConnect(APP_NAME, APP_ID);
@@ -44,13 +45,15 @@ public class YelpHelper {
     }
     public JsonObject getBusinessQuery() {
         if(location == null && coordinate == null) return null;
-        if(!location.equals("")) {body.put("location", new Argument("data", location));}
-        else {body.put("coordinate", new Argument("data", coordinate));}
+        if(!location.equals("")) body.put("location", new Argument("data", location));
+        else body.put("coordinate", new Argument("data", coordinate));
         // body.put("coordinate", new Argument("data", coordinate));
         // System.out.println(location);
         body.put("term", new Argument("data", term));
-        if(offset != 0) body.put("offset", new Argument("data", String.valueOf(offset)));
+        body.put("offset", new Argument("data", String.valueOf(offset)));
         body.put("openNow", new Argument("data", String.valueOf(openNow)));
+        body.put("sortBy", new Argument("data", sortBy));
+        // System.out.println("Opennow:" + String.valueOf(openNow));
         body.put("limit", new Argument("data", String.valueOf(limit)));
         if(radius > 0 ) body.put("radius", new Argument("data", String.valueOf(radius)));
         try {
@@ -88,15 +91,17 @@ public class YelpHelper {
         this.openNow = openNow;
     }
 
-    public Double getRadius() {
+
+    public int getRadius() {
         return radius;
     }
 
-    public void setRadius(Double radius) {
+    public void setRadius(int radius) {
         this.radius = radius;
     }
 
     public String getLocation() {
+
         return location;
     }
 
@@ -120,4 +125,11 @@ public class YelpHelper {
         this.offset = offset;
     }
 
+    public String getSortBy() {
+        return sortBy;
+    }
+
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
+    }
 }
