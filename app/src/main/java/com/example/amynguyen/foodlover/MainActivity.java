@@ -1,7 +1,9 @@
 package com.example.amynguyen.foodlover;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             ACCESS_FINE_LOCATION,
             ACCESS_COARSE_LOCATION
     };
+
+
     private static final int LOCATION_REQUEST=1340;
     Fragment fragment = new SearchFragment();
     YelpHelper yelpHelper = new YelpHelper();
@@ -159,4 +163,5 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         }
         return loadFragment(fragment);
     }
+
 }
