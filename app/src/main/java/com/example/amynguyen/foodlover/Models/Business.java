@@ -8,6 +8,7 @@ public class Business {
     Double rating;
     String imgURL;
     String distanceFromCurrentLocation = null;
+
     public Business(String  businessId, String name, String address, String category, Double rating, String imgURL)   {
         this.businessId = businessId;
         this.name = name;

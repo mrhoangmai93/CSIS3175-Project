@@ -21,6 +21,7 @@ import android.widget.Toast;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.example.amynguyen.foodlover.Database.MyDBHandler;
 import com.example.amynguyen.foodlover.Fragments.FavoriteFragment;
 import com.example.amynguyen.foodlover.Fragments.RecentFragment;
 import com.example.amynguyen.foodlover.Fragments.SearchFragment;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // this.getBusinessList();
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (!canAccessLocation()) {

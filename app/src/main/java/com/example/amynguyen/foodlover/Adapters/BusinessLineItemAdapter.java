@@ -120,4 +120,5 @@ public class BusinessLineItemAdapter extends BaseAdapter {
         TextView txtDistance;
 
     }
+
 }

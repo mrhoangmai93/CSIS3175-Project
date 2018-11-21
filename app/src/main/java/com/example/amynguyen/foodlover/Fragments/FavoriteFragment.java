@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.example.amynguyen.foodlover.Adapters.BusinessLineItemAdapter;
 import com.example.amynguyen.foodlover.CustomView.NoScrollListView;
+import com.example.amynguyen.foodlover.Database.MyDBHandler;
 import com.example.amynguyen.foodlover.Models.Business;
 import com.example.amynguyen.foodlover.R;
 
@@ -15,22 +16,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FavoriteFragment extends android.support.v4.app.Fragment {
-    List<Business> businessInfo = new ArrayList<>();
-    public void addResult() {
-/*        businessInfo.add(new Business("a", "b", "c", 3.0,
-                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
-        businessInfo.add(new Business("d", "b", "c", 3.0,
-                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
-        businessInfo.add(new Business("e", "b", "c", 3.0,
-                "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));*/
+    List<Business> businessInfo;
+    MyDBHandler db;
+    BusinessLineItemAdapter myAdapter;
+
+    private void addFavoriteToBusiness()    {
+
+        businessInfo = db.loadFavorite();
     }
+
     @Nullable
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
         NoScrollListView myList = (NoScrollListView) view.findViewById(R.id.listViewFavorite);
-        addResult();
-        BusinessLineItemAdapter myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
+        businessInfo = new ArrayList<>();
+        db = MyDBHandler.getInstance(getContext());
+        BusinessLineItemAdapter myAdapter;
+        addFavoriteToBusiness();
+        myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
         myList.setAdapter(myAdapter);
 
         return view;
