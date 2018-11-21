@@ -13,11 +13,10 @@ public class Business {
         this.name = name;
         this.address = address;
         this.category = category;
-
         this.rating = rating;
         this.imgURL = imgURL;
-
     }
+
 
     public String getName() {
         return name;

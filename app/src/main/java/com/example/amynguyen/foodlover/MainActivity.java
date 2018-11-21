@@ -13,6 +13,7 @@ import android.support.design.widget.BottomNavigationView;
 
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,9 +28,12 @@ import com.example.amynguyen.foodlover.Fragments.SearchFragment;
 import com.example.amynguyen.foodlover.yelpAPI.YelpHelper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.ncapdevi.fragnav.FragNavController;
+import com.ncapdevi.fragnav.FragNavTransactionOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +49,13 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             ACCESS_COARSE_LOCATION
     };
 
+    private FragNavController fragNavController;
+    ;
+
+    //indices to fragments
+    private final int TAB_FIRST = FragNavController.TAB1;
+    private final int TAB_SECOND = FragNavController.TAB2;
+    private final int TAB_THIRD = FragNavController.TAB3;
 
     private static final int LOCATION_REQUEST=1340;
     Fragment fragment = new SearchFragment();
@@ -52,6 +63,23 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        //FragNav
+        //list of fragments
+        List<Fragment> fragments = new ArrayList<>(3);
+        //add fragments to list
+        fragments.add(SearchFragment.newInstance(0));
+        fragments.add(FavoriteFragment.newInstance(0));
+        fragments.add(RecentFragment.newInstance(0));
+
+        //link fragments to container
+        fragNavController = FragNavController.newBuilder(savedInstanceState, getSupportFragmentManager(), R.id.fragment_container)
+                .rootFragments(fragments)
+                .defaultTransactionOptions(FragNavTransactionOptions.newBuilder().transition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).build())
+                .build();
+
+
+
         // this.getBusinessList();
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (!canAccessLocation()) {
@@ -70,11 +98,10 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     @Override
     protected void onStart() {
         super.onStart();
-        setContentView(R.layout.activity_main);
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
-        loadFragment(fragment);
+        // loadFragment(fragment);
 
         navigation.setOnNavigationItemSelectedListener(this);
         try {
@@ -85,7 +112,6 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             System.out.println(exception);
         }
     }
-
     @Override
     public void onLocationChanged(Location location) {
         // this.getBusinessList();
@@ -133,35 +159,54 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         return (PackageManager.PERMISSION_GRANTED == checkSelfPermission(perm));
     }
 
-    private boolean loadFragment(Fragment fragment) {
+/*    private boolean loadFragment(Fragment fragment) {
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment)
                     .commit();
             return true;
         }
         return false;
-    }
+    }*/
 
+    @Override
+    public void onBackPressed() {
+        if (fragNavController.getCurrentStack().size() > 1) {
+            fragNavController.popFragment();
+        } else {
+            super.onBackPressed();
+        }
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Necessary to restore the BottomBar's state, otherwise we would
+        // lose the current tab on orientation change.
+        fragNavController.onSaveInstanceState(outState);
+    }
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.navigation_search:
-                fragment = new SearchFragment();
+                //fragment = new SearchFragment();
+                fragNavController.switchTab(TAB_FIRST);
                 break;
 
             case R.id.navigation_favorite:
-                fragment = new FavoriteFragment();
+                //fragment = new FavoriteFragment();
+                fragNavController.switchTab(TAB_SECOND);
                 break;
 
             case R.id.navigation_recent:
-                fragment = new RecentFragment();
+                //fragment = new RecentFragment();
+                fragNavController.switchTab(TAB_THIRD);
                 break;
 
 
 
         }
-        return loadFragment(fragment);
+        // return loadFragment(fragment);
+        return true;
     }
-
 }

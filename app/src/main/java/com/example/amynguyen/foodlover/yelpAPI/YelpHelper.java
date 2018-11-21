@@ -48,10 +48,10 @@ public class YelpHelper {
         if(!location.equals("")) body.put("location", new Argument("data", location));
         else body.put("coordinate", new Argument("data", coordinate));
         // body.put("coordinate", new Argument("data", coordinate));
-        // System.out.println(location);
+        System.out.println(location);
         body.put("term", new Argument("data", term));
         body.put("offset", new Argument("data", String.valueOf(offset)));
-        body.put("openNow", new Argument("data", String.valueOf(openNow)));
+        // body.put("openNow", new Argument("data", String.valueOf(openNow)));
         body.put("sortBy", new Argument("data", sortBy));
         // System.out.println("Opennow:" + String.valueOf(openNow));
         body.put("limit", new Argument("data", String.valueOf(limit)));

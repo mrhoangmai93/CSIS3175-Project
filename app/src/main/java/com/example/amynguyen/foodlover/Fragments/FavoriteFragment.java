@@ -16,6 +16,13 @@ import java.util.List;
 
 public class FavoriteFragment extends android.support.v4.app.Fragment {
     List<Business> businessInfo = new ArrayList<>();
+    public static FavoriteFragment newInstance(int instance) {
+        Bundle args = new Bundle();
+        args.putInt("argsInstance", instance);
+        FavoriteFragment favoriteFragment = new FavoriteFragment();
+        favoriteFragment.setArguments(args);
+        return favoriteFragment;
+    }
     public void addResult() {
 /*        businessInfo.add(new Business("a", "b", "c", 3.0,
                 "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));

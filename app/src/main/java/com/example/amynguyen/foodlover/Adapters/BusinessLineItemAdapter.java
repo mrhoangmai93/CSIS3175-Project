@@ -93,6 +93,7 @@ public class BusinessLineItemAdapter extends BaseAdapter {
             holder.txtCategory = view.findViewById(R.id.txtCategory);
             holder.txtAddress = view.findViewById(R.id.txtAddress);
             holder.txtDistance = view.findViewById(R.id.txtDistance);
+            holder.isClosed = view.findViewById(R.id.imgViewOpenClose);
             view.setTag(holder);
         }else {
                 holder = (ViewHolder) view.getTag();
@@ -118,6 +119,7 @@ public class BusinessLineItemAdapter extends BaseAdapter {
         TextView txtCategory;
         TextView txtAddress;
         TextView txtDistance;
+        ImageView isClosed;
 
     }
 }

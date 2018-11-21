@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.support.customtabs.CustomTabsIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +43,7 @@ import com.google.gson.JsonArray;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -80,6 +80,13 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
     MyDBHandler db;
     Business currentItem;
     YelpHelper yelpHelper = new YelpHelper();
+    public static SearchFragment newInstance(int instance) {
+        Bundle args = new Bundle();
+        args.putInt("argsInstance", instance);
+        SearchFragment searchFragment = new SearchFragment();
+        searchFragment.setArguments(args);
+        return searchFragment;
+    }
 
     @Nullable
     @Override
@@ -100,7 +107,22 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
 
         return view;
     }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
 
+        savedInstanceState.putString("testchoi", "Gladiator");
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            //Restore the fragment's state here
+            System.out.println("tao day " + savedInstanceState.getString("testchoi"));
+        }
+        // System.out.println(savedInstanceState.getString("testchoi"));
+
+    }
     public void initLoad(View view) {
         locationSearch = (SearchView) view.findViewById(R.id.searchViewLocation);
         foodSearch = (SearchView) view.findViewById(R.id.searchViewRestaurant);
@@ -146,16 +168,15 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
 
                 btnView = myDialog.findViewById(R.id.buttonView);
                 btnFavorite = myDialog.findViewById(R.id.buttonFavorite);
-/*                btnView.setOnClickListener(new View.OnClickListener() {
+                btnView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         //how to get the position
-                        builder = new CustomTabsIntent.Builder();
-                        customTabsIntent = builder.build();
-                        customTabsIntent.launchUrl(getContext(), Uri.parse(currentItem.getImgURL()));
-
+                        String uri = String.format(Locale.ENGLISH, "geo:0,0?q=%s", currentItem.getAddress());
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                        getContext().startActivity(intent);
                     }
-                });*/
+                });
 
                 btnFavorite.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -270,7 +291,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
             yelpHelper.setOffset(0);
 
             // Get optional parameters
-            yelpHelper.setOpenNow(switchOpenNow.isChecked());
+            // yelpHelper.setOpenNow(switchOpenNow.isChecked());
             if(distanceInput.getText().toString().equals("")) {
                 yelpHelper.setRadius(DEFAULT_RADIUS);
             }else {
@@ -288,11 +309,11 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                 String coordinate = location.getLatitude() + ", " + location.getLongitude();
                 yelpHelper.setCoordinate(coordinate);
                 //yelpHelper.setCoordinate("49.20390,-122.91308");
-                // System.out.println(coordinate);
+                // System.out.println(yelpHelper.getCoordinate());
             }
-            if (!locationSearch.getQuery().toString().equals("")) yelpHelper.setLocation("");
+            if (locationSearch.getQuery().toString().equals("")) yelpHelper.setLocation("");
             else yelpHelper.setLocation(locationSearch.getQuery().toString());
-
+            // System.out.println("Location: " + yelpHelper.getLocation());
             // Print// create Yelp Helper instance
             final Handler handler = new Handler(Looper.getMainLooper());
             Runnable runnable = new Runnable() {

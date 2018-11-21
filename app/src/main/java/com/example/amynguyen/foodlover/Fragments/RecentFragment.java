@@ -16,6 +16,13 @@ import java.util.List;
 
 public class RecentFragment extends android.support.v4.app.Fragment {
     List<Business> businessInfo = new ArrayList<>();
+    public static RecentFragment newInstance(int instance) {
+        Bundle args = new Bundle();
+        args.putInt("argsInstance", instance);
+        RecentFragment recentFragment = new RecentFragment();
+        recentFragment.setArguments(args);
+        return recentFragment;
+    }
     public void addResult() {
 /*        businessInfo.add(new Business("a", "b", "c", 3.0,
                 "https://upload.wikimedia.org/wikipedia/en/a/ae/Love_TV_Logo.png"));
