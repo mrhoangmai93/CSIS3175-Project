@@ -122,4 +122,5 @@ public class BusinessLineItemAdapter extends BaseAdapter {
         ImageView isClosed;
 
     }
+
 }

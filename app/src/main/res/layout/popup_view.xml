@@ -16,8 +16,8 @@
     <Button
         android:id="@+id/buttonView"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@android:color/transparent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/white"
         android:text="@string/btnView"
         android:textSize="20sp" />
 
@@ -25,7 +25,7 @@
         android:id="@+id/buttonFavorite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:backgroundTint="@android:color/white"
         android:text="@string/btnFavorite"
         android:textSize="20sp" />
 </LinearLayout>

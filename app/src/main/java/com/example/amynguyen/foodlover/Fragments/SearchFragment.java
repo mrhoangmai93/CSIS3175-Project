@@ -3,6 +3,7 @@ package com.example.amynguyen.foodlover.Fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -13,15 +14,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.Spinner;
@@ -49,6 +53,8 @@ import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
 
+
+
 public class SearchFragment extends android.support.v4.app.Fragment implements ScrollViewListener {
 
     Dialog myDialog;
@@ -68,8 +74,6 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
     int preScrollY = 0;
     private static final int LOAD_PER_PAGE = 20;
     private static final int DEFAULT_RADIUS = 3000;
-    //CustomTabsIntent.Builder builder;
-    // CustomTabsIntent customTabsIntent;
     public View footView;
     ScrollViewExt scroll;
     public boolean isLoading = false;
@@ -77,7 +81,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
     public int offset = LOAD_PER_PAGE;
     Button btnView;
     Button btnFavorite;
-    MyDBHandler db;
+    public MyDBHandler db;
     Business currentItem;
     YelpHelper yelpHelper = new YelpHelper();
     public static SearchFragment newInstance(int instance) {
@@ -88,16 +92,18 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
         return searchFragment;
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         mainView = view;
-        MyDBHandler db;
 
         footView = inflater.inflate(R.layout.footer_view, null);
         // mHandler = new MyHandler();
 
+        //create database
+        db = MyDBHandler.getInstance(getContext());
 
         initLoad(view);
         //favorite = (ImageView) view.findViewById(R.id.imageViewFavorite);
@@ -163,9 +169,6 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                 myDialog.show();
                 currentItem = (Business) myAdapter.getItem(position);
 
-                //create database
-                db = new MyDBHandler(getContext());
-
                 btnView = myDialog.findViewById(R.id.buttonView);
                 btnFavorite = myDialog.findViewById(R.id.buttonFavorite);
                 btnView.setOnClickListener(new View.OnClickListener() {
@@ -177,15 +180,32 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                         getContext().startActivity(intent);
                     }
                 });
+                       /* builder = new CustomTabsIntent.Builder();
+                        customTabsIntent = builder.build();
+                        customTabsIntent.launchUrl(getContext(), Uri.parse(currentItem.getImgURL()));
+                        myDialog.dismiss();*/
+
+                if(db.searchFromFavorite(myAdapter, position)) {
+                    btnFavorite.setText("Remove From Favorite");
+                    favorite.setImageResource(R.drawable.ic_favorite);
+                }
 
                 btnFavorite.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
-                        favorite.setImageResource(R.drawable.ic_favorite);
-                        db.addToFavorite(myAdapter, position);
-                        //System.out.println("Result" + db.loadFavorite());
-
+                        if(db.deleteFromFavorite(myAdapter, position)) {
+                            //System.out.println("Result delete" + db.loadFavorite());
+                            favorite.setImageResource(R.drawable.ic_favorite_border);
+                            btnFavorite.setText("Add To Favorite");
+                        }
+                        else {
+                            if(!db.searchFromFavorite(myAdapter, position)) {
+                            favorite.setImageResource(R.drawable.ic_favorite);
+                            db.addToFavorite(myAdapter, position);
+                            //System.out.println("Result" + db.loadFavorite());
+                            btnFavorite.setText("Remove From Favorite"); }
+                        }
+                        //System.out.println("Favorite Item" + db.loadFavorite().get(0).getName());
                     }
                 });
             }
@@ -272,6 +292,8 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
             }
         });*/
     }
+
+
 
     public void getBusinessList() {
         try {
@@ -363,6 +385,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                 return "best_match";
         }
     }
+
     public Business getBusinessFromJson(JsonElement pa) {
         Business businessObj = null;
         if (pa != null) {
