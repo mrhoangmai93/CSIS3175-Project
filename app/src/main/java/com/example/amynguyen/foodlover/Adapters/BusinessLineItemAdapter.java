@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.example.amynguyen.foodlover.Database.MyDBHandler;
 import com.example.amynguyen.foodlover.Models.Business;
 import com.example.amynguyen.foodlover.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -26,12 +27,13 @@ public class BusinessLineItemAdapter extends BaseAdapter {
     Context context;
     LayoutInflater layoutInflater;
     private DisplayImageOptions options;
+    MyDBHandler myDBHandler;
     ImageLoader imageLoader = ImageLoader.getInstance();
     private static LayoutInflater inflater=null;
-    public BusinessLineItemAdapter(List<Business> businessInfo, Context context)   {
+    public BusinessLineItemAdapter(List<Business> businessInfo, Context context, MyDBHandler myDBHandler)   {
          businessInfoList = businessInfo;
          layoutInflater = LayoutInflater.from(context);
-
+         this.myDBHandler = myDBHandler;
 /*        for(Business bus : businessInfoList) {
             System.out.println("result #" + bus.getName());
         }*/
@@ -66,6 +68,11 @@ public class BusinessLineItemAdapter extends BaseAdapter {
 
     }
 
+    public void deleteItem(int  i)    {
+        businessInfoList.remove(i);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return businessInfoList.size();
@@ -93,7 +100,8 @@ public class BusinessLineItemAdapter extends BaseAdapter {
             holder.txtCategory = view.findViewById(R.id.txtCategory);
             holder.txtAddress = view.findViewById(R.id.txtAddress);
             holder.txtDistance = view.findViewById(R.id.txtDistance);
-            holder.isClosed = view.findViewById(R.id.imgViewOpenClose);
+            holder.txtReviewCount = view.findViewById(R.id.textViewReview);
+            holder.isFavourite = view.findViewById(R.id.imageViewFavorite);
             view.setTag(holder);
         }else {
                 holder = (ViewHolder) view.getTag();
@@ -102,6 +110,14 @@ public class BusinessLineItemAdapter extends BaseAdapter {
         holder.txtReview.setEnabled(false);
         holder.txtReview.setMax(5);
         holder.txtReview.setStepSize(0.01f);
+        holder.txtReviewCount.setText(String.valueOf(businessInfoList.get(i).getReviewCount()));
+
+        if(myDBHandler.isBusinessExistFromFavorite(businessInfoList.get(i).getBusinessId()))
+        {holder.isFavourite.setImageResource(R.drawable.ic_favorite);}
+        else {
+            holder.isFavourite.setImageResource(R.drawable.ic_favorite_border);
+        }
+
         holder.txtReview.setRating(Float.parseFloat(String.valueOf(businessInfoList.get(i).getRating())));
         holder.txtReview.invalidate();
         holder.txtCategory.setText(businessInfoList.get(i).getCategory());
@@ -120,6 +136,8 @@ public class BusinessLineItemAdapter extends BaseAdapter {
         TextView txtAddress;
         TextView txtDistance;
         ImageView isClosed;
+        ImageView isFavourite;
+        TextView txtReviewCount;
 
     }
 

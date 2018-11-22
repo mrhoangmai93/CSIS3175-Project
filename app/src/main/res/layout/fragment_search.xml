@@ -1,150 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.example.amynguyen.foodlover.CustomView.ScrollViewExt xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
     android:layout_width="match_parent" android:layout_height="match_parent">
-<RelativeLayout
+<android.support.constraint.ConstraintLayout
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imageViewBanner"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/txtImageDescription"
-        android:src="@drawable/banner" />
+        android:src="@drawable/banner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <SearchView
         android:id="@+id/searchViewRestaurant"
-        android:layout_width="match_parent"
+        android:layout_width="360dp"
         android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginTop="8dp"
         android:background="@color/colorSearch"
         android:queryHint="@string/txtFoodHint"
-        android:searchIcon="@drawable/ic_food"/>
-
+        android:searchIcon="@drawable/ic_food"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <SearchView
         android:id="@+id/searchViewLocation"
-        android:layout_width="match_parent"
+        android:layout_width="360dp"
         android:layout_height="50dp"
-
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="65dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@color/colorSearch"
         android:queryHint="@string/txtLocationHint"
-        android:searchIcon="@drawable/ic_location"/>
-
-    <Switch
-        android:id="@+id/switchOpenNow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/searchViewRestaurant"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="9dp"
-        android:layout_marginTop="229dp"
-        android:text="@string/txtOpenNow"
-        android:textSize="16sp" />
+        android:searchIcon="@drawable/ic_location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchViewRestaurant" />
 
     <TextView
         android:id="@+id/txtViewDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/switchOpenNow"
-        android:layout_alignBottom="@+id/switchOpenNow"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="9dp"
-        android:layout_marginTop="11dp"
-        android:layout_marginBottom="-31dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/txtDistance"
         android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.013"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewBanner" />
 
     <EditText
         android:id="@+id/editTextDistance"
         android:layout_width="81dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/switchOpenNow"
-        android:layout_alignBottom="@+id/switchOpenNow"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="-40dp"
-        android:layout_toEndOf="@+id/txtViewDistance"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="8dp"
+        android:autofillHints=""
         android:ems="10"
         android:hint="@string/distanceHint"
         android:inputType="number"
         android:textAlignment="center"
         android:textSize="16sp"
-        android:autofillHints="" />
-
-    <Spinner
-        android:id="@+id/spinnerSortBy"
-        android:layout_width="149dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textViewSortBy"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="75dp"
-        android:layout_marginBottom="0dp"
-        android:entries="@array/sortBy" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.014"
+        app:layout_constraintStart_toEndOf="@+id/txtViewDistance"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewBanner" />
 
     <TextView
         android:id="@+id/textViewSortBy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/switchOpenNow"
-        android:layout_alignParentStart="true"
+
         android:layout_marginStart="8dp"
-        android:layout_marginTop="43dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/txtSortBy"
         android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.012"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtViewDistance" />
 
     <Spinner
-        android:id="@+id/spinnerOrderBy"
-        android:layout_width="132dp"
+        android:id="@+id/spinnerSortBy"
+        android:layout_width="149dp"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textViewSortBy"
-        android:layout_alignBottom="@+id/textViewSortBy"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="9dp"
-        android:layout_marginTop="-2dp"
-        android:layout_marginEnd="46dp"
-        android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/spinnerSortBy"
-        android:entries="@array/sortOrder" />
-
-    <com.example.amynguyen.foodlover.CustomView.NoScrollListView
-        android:id="@+id/listViewResult"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/spinnerSortBy"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="-83dp"
-        android:layout_marginBottom="105dp" />
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:entries="@array/sortBy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.019"
+        app:layout_constraintStart_toEndOf="@+id/textViewSortBy"
+        app:layout_constraintTop_toBottomOf="@+id/editTextDistance" />
 
     <Button
         android:id="@+id/btnSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="131dp"
-        android:layout_marginTop="161dp"
-        android:text="Button" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="@string/searchBtn"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerSortBy" />
 
+    <com.example.amynguyen.foodlover.CustomView.NoScrollListView
+        android:id="@+id/listViewResult"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSearch" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
 </com.example.amynguyen.foodlover.CustomView.ScrollViewExt>

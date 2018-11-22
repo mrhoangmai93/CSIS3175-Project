@@ -68,9 +68,9 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
     SearchView locationSearch;
     SearchView foodSearch;
 
-    Switch switchOpenNow;
+
     Spinner spinnerSortBy;
-    Spinner spinnerOrderBy;
+
     int preScrollY = 0;
     private static final int LOAD_PER_PAGE = 20;
     private static final int DEFAULT_RADIUS = 3000;
@@ -132,14 +132,14 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
     public void initLoad(View view) {
         locationSearch = (SearchView) view.findViewById(R.id.searchViewLocation);
         foodSearch = (SearchView) view.findViewById(R.id.searchViewRestaurant);
-        switchOpenNow = (Switch) view.findViewById(R.id.switchOpenNow);
+
         distanceInput = (EditText) view.findViewById(R.id.editTextDistance);
         spinnerSortBy = (Spinner) view.findViewById(R.id.spinnerSortBy);
-        spinnerOrderBy = (Spinner) view.findViewById(R.id.spinnerOrderBy);
+        //distanceInput.setFocusable(false);
 
-        switchOpenNow.setChecked(true);
+
+
         final Button btnSearch = (Button) view.findViewById(R.id.btnSearch);
-
 
         foodSearch.setFocusable(true);
         foodSearch.setIconified(false);
@@ -178,6 +178,18 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                         String uri = String.format(Locale.ENGLISH, "geo:0,0?q=%s", currentItem.getAddress());
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                         getContext().startActivity(intent);
+                        if(!db.isBusinessexistFromRecent(((Business) myAdapter.getItem(position)).getBusinessId())) {
+                            db.addToRecent(myAdapter, position);
+                        }
+                        else {
+                            db.deleteFromRecent(myAdapter, position);
+                            db.addToRecent(myAdapter, position);
+                        }
+                        if(db.loadRecent().size() > 10) {
+                            db.deleteFirstRecordFromRecent();
+                        }
+
+
                     }
                 });
                        /* builder = new CustomTabsIntent.Builder();
@@ -185,25 +197,26 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                         customTabsIntent.launchUrl(getContext(), Uri.parse(currentItem.getImgURL()));
                         myDialog.dismiss();*/
 
-                if(db.searchFromFavorite(myAdapter, position)) {
+                if(db.isBusinessExistFromFavorite(((Business) myAdapter.getItem(position)).getBusinessId())) {
                     btnFavorite.setText("Remove From Favorite");
-                    favorite.setImageResource(R.drawable.ic_favorite);
                 }
 
                 btnFavorite.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(db.deleteFromFavorite(myAdapter, position)) {
+                        if(db.isBusinessExistFromFavorite(((Business) myAdapter.getItem(position)).getBusinessId())) {
                             //System.out.println("Result delete" + db.loadFavorite());
                             favorite.setImageResource(R.drawable.ic_favorite_border);
                             btnFavorite.setText("Add To Favorite");
+                            db.deleteFromFavorite(myAdapter, position);
                         }
                         else {
-                            if(!db.searchFromFavorite(myAdapter, position)) {
+                            if(!db.isBusinessExistFromFavorite(((Business) myAdapter.getItem(position)).getBusinessId())) {
                             favorite.setImageResource(R.drawable.ic_favorite);
                             db.addToFavorite(myAdapter, position);
+                            btnFavorite.setText("Remove From Favorite");
                             //System.out.println("Result" + db.loadFavorite());
-                            btnFavorite.setText("Remove From Favorite"); }
+                            }
                         }
                         //System.out.println("Favorite Item" + db.loadFavorite().get(0).getName());
                     }
@@ -358,7 +371,8 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                             public void run() {
                                 //myAdapter.refresAdapter(finishList);
                                 // myAdapter.notifyDataSetChanged();
-                                myAdapter = new BusinessLineItemAdapter(finishList, getContext());
+                                myAdapter = new BusinessLineItemAdapter(finishList, getContext(), db);
+
                                 myList.setAdapter(myAdapter);
                                 isLoading = false;
                                 // myList.invalidateViews();

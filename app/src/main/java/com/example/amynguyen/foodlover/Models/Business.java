@@ -8,6 +8,9 @@ public class Business {
     Double rating;
     String imgURL;
     String distanceFromCurrentLocation = null;
+    Integer reviewCount;
+
+
 
     public Business(String  businessId, String name, String address, String category, Double rating, String imgURL)   {
         this.businessId = businessId;
@@ -16,8 +19,17 @@ public class Business {
         this.category = category;
         this.rating = rating;
         this.imgURL = imgURL;
+        //this.reviewCount = reviewCount;
     }
 
+
+    public Integer getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
+    }
 
     public String getName() {
         return name;

@@ -13,12 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyDBHandler extends SQLiteOpenHelper {
-    Business biz;
-    List<Business> bizList = new ArrayList<>();
+
 
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "Restaurant_DB.db";
+    private static final String DATABASE_NAME = "DB_Restaurant.db";
     private static final String TABLE_FAVORITE_NAME = "restaurant_favorite";
     private static final String TABLE_RECENT_NAME = "restaurant_recent";
     private static MyDBHandler sInstance;
@@ -64,8 +63,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     }
 
     public void addToFavorite(BusinessLineItemAdapter myAdapter, int i) {
-
-        biz = (Business) myAdapter.getItem(i);
+        Business biz = (Business) myAdapter.getItem(i);
         ContentValues val = new ContentValues();
         val.put("businessID", biz.getBusinessId());
         val.put("name", biz.getName());
@@ -81,7 +79,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     }
 
     public void addToRecent(BusinessLineItemAdapter myAdapter, int i) {
-        biz = (Business) myAdapter.getItem(i);
+        Business biz = (Business) myAdapter.getItem(i);
         ContentValues val = new ContentValues();
         val.put("businessID", biz.getBusinessId());
         val.put("name", biz.getName());
@@ -97,21 +95,23 @@ public class MyDBHandler extends SQLiteOpenHelper {
     }
 
     public List<Business> loadFavorite()    {
-        //bizList = new ArrayList<>();
-
+        List<Business> bizList = new ArrayList<>();
         String query = "SELECT * FROM " + TABLE_FAVORITE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
             do {
-                biz.setBusinessId(cursor.getString(0));
+                Business biz = new Business(cursor.getString(0),
+                        cursor.getString(1), cursor.getString(2), cursor.getString(3),
+                        cursor.getDouble(4), cursor.getString(5));
+/*                biz.setBusinessId(cursor.getString(0));
                 biz.setName(cursor.getString(1));
                 biz.setAddress(cursor.getString(2));
                 biz.setCategory(cursor.getString(3));
                 biz.setRating(cursor.getDouble(4));
-                biz.setImgURL(cursor.getString(5));
-
+                biz.setImgURL(cursor.getString(5));*/
+                System.out.println("Business: " + biz.getName());
                 bizList.add(biz);
             } while (cursor.moveToNext());
         }
@@ -134,33 +134,106 @@ public class MyDBHandler extends SQLiteOpenHelper {
         return bizList;
     }
 
-    public boolean deleteFromFavorite(BusinessLineItemAdapter myAdapter, int i) {
-        biz = (Business) myAdapter.getItem(i);
+    public void deleteFromFavorite(BusinessLineItemAdapter myAdapter, int i) {
+        Business biz = (Business) myAdapter.getItem(i);
+//        String query = "SELECT * FROM " + TABLE_FAVORITE_NAME + " WHERE businessID = "
+//                + "'" +  String.valueOf(biz.getBusinessId()) + "'";
+       SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(query, null);
+
+            db.delete(TABLE_FAVORITE_NAME, "businessID =?" , new String[] {biz.getBusinessId()});
+
+        db.close();
+
+    }
+
+
+    public boolean isBusinessExistFromFavorite(String businessId)  {
         String query = "SELECT * FROM " + TABLE_FAVORITE_NAME + " WHERE businessID = "
-                + "'" +  String.valueOf(biz.getBusinessId()) + "'";
+                + "'" +  businessId + "'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         while (cursor.moveToFirst()) {
-            db.delete(TABLE_FAVORITE_NAME, "businessID =?" , new String[] {String.valueOf(cursor.getString(0))});
-            cursor.close();
+            if(!cursor.getString(0).equals(""))
+                cursor.close();
             return true;
         }
         db.close();
         return false;
     }
 
-    public boolean searchFromFavorite(BusinessLineItemAdapter myAdapter, int i) {
-        biz = (Business) myAdapter.getItem(i);
-        String query = "SELECT * FROM " + TABLE_FAVORITE_NAME + " WHERE businessID = "
-                + "'" +  String.valueOf(biz.getBusinessId()) + "'";
+    public boolean isBusinessexistFromRecent(String businessId) {
+        String query = "SELECT * FROM " + TABLE_RECENT_NAME + " WHERE businessID = "
+                + "'" +  businessId + "'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         while (cursor.moveToFirst()) {
             if(!cursor.getString(0).equals(""))
-            cursor.close();
+                cursor.close();
             return true;
         }
         db.close();
         return false;
+
+
+    }
+
+    public void deleteFromRecent(BusinessLineItemAdapter myAdapter, int i) {
+        Business biz = (Business) myAdapter.getItem(i);
+//        String query = "SELECT * FROM " + TABLE_FAVORITE_NAME + " WHERE businessID = "
+//                + "'" +  String.valueOf(biz.getBusinessId()) + "'";
+        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(query, null);
+
+        db.delete(TABLE_RECENT_NAME, "businessID =?" , new String[] {biz.getBusinessId()});
+
+        db.close();
+    }
+
+    public void deleteFirstRecordFromRecent() {
+        String query = "delete from " + TABLE_RECENT_NAME +
+                " where businessID in (select businessID from "+ TABLE_RECENT_NAME +" LIMIT 1)";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(query);
+    }
+
+    public List<Business> loadRecent()    {
+        List<Business> bizList = new ArrayList<>();
+        String query = "SELECT * FROM " + TABLE_RECENT_NAME;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToLast()) {
+            do {
+                Business biz = new Business(cursor.getString(0),
+                        cursor.getString(1), cursor.getString(2), cursor.getString(3),
+                        cursor.getDouble(4), cursor.getString(5));
+/*                biz.setBusinessId(cursor.getString(0));
+                biz.setName(cursor.getString(1));
+                biz.setAddress(cursor.getString(2));
+                biz.setCategory(cursor.getString(3));
+                biz.setRating(cursor.getDouble(4));
+                biz.setImgURL(cursor.getString(5));*/
+                System.out.println("Business: " + biz.getName());
+                bizList.add(biz);
+            } while (cursor.moveToPrevious());
+        }
+
+
+        /*while (cursor.moveToNext()) {
+            biz.setBusinessId(cursor.getString(0));
+            biz.setName(cursor.getString(1));
+            biz.setAddress(cursor.getString(2));
+            biz.setCategory(cursor.getString(3));
+            biz.setRating(cursor.getDouble(4));
+            biz.setImgURL(cursor.getString(5));
+            //System.out.println("Hien thi " + biz.getName());
+            bizList.add(biz);
+
+        }*/
+
+        cursor.close();
+        db.close();
+        return bizList;
     }
 }

@@ -13,23 +13,24 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:adjustViewBounds="true"
         android:contentDescription="@string/imgRestaurant"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@android:color/white"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"/>
+        app:srcCompat="@android:color/white" />
 
     <TableLayout
         android:id="@+id/tableBusiness"
         android:layout_width="0dp"
         android:layout_height="87dp"
         android:layout_marginStart="6dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -43,7 +44,8 @@
 
             <TextView
                 android:id="@+id/txtName"
-                android:layout_width="258dp"
+                android:layout_width="246dp"
+                android:layout_height="match_parent"
                 android:padding="3dip"
                 android:textStyle="bold" />
 
@@ -62,7 +64,7 @@
             android:layout_height="6dp">
 
             <android.support.constraint.ConstraintLayout
-                android:layout_width="153dp"
+                android:layout_width="254dp"
                 android:layout_height="match_parent">
 
                 <RatingBar
@@ -71,21 +73,37 @@
                     style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="80dp"
                     android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/textViewReview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="4dp"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.119"
+                    app:layout_constraintStart_toEndOf="@+id/ratingBarReview"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0" />
+
             </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout>
 
                 <ImageView
                     android:id="@+id/imageViewFavorite"
-                    android:layout_width="23dp"
-                    android:layout_height="18dp"
+                    android:layout_width="18dp"
+                    android:layout_height="19dp"
                     android:contentDescription="@string/favoriteIcon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0"
+                    app:layout_constraintVertical_bias="1.0"
                     app:srcCompat="@drawable/ic_favorite_border" />
             </android.support.constraint.ConstraintLayout>
 
@@ -123,30 +141,16 @@
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    tools:layout_editor_absoluteY="0dp"
-                    tools:ignore="MissingConstraints" />
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteY="0dp" />
             </android.support.constraint.ConstraintLayout>
-<android.support.constraint.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/imgViewOpenClose"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="13dp"
-        android:contentDescription="@string/txtImgDesOpenClose"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_open" /></android.support.constraint.ConstraintLayout>
+            <android.support.constraint.ConstraintLayout>
+
+            </android.support.constraint.ConstraintLayout>
         </TableRow>
 
     </TableLayout>
-
-
 
 
 </android.support.constraint.ConstraintLayout>
