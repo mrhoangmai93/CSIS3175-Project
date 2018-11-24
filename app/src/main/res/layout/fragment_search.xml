@@ -73,6 +73,8 @@
         android:ems="10"
         android:hint="@string/distanceHint"
         android:inputType="number"
+        android:cursorVisible="false"
+        android:focusable="false"
         android:textAlignment="center"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"

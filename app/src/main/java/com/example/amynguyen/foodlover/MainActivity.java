@@ -85,9 +85,10 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             ActivityCompat.requestPermissions(this, LOCATION_PERMS, LOCATION_REQUEST);
         }
         try {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
+/*            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, MainActivity.this);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, MainActivity.this);*/
             //Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            // System.out.println(location);
+            //System.out.println(location);
         }catch (SecurityException exception) {
             System.out.println(exception);
         }
@@ -103,20 +104,21 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         // loadFragment(fragment);
 
         navigation.setOnNavigationItemSelectedListener(this);
-        try {
-            // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
+/*        try {
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, MainActivity.this);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, MainActivity.this);
             Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            System.out.println(location);
+            // System.out.println(location);
         }catch (SecurityException exception) {
             System.out.println(exception);
-        }
+        }*/
     }
     @Override
     public void onLocationChanged(Location location) {
         // this.getBusinessList();
         if (location != null) {
             Log.v("Location Changed", location.getLatitude() + " and " + location.getLongitude());
-            mLocationManager.removeUpdates(this);
+            mLocationManager.removeUpdates(MainActivity.this);
         }
     }
 
@@ -148,6 +150,11 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             Toast.makeText(this, "Location permission is a must", Toast.LENGTH_SHORT).show();
             finish();
         }else {
+/*            try {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, MainActivity.this);
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, MainActivity.this);
+            }catch (SecurityException exception) {
+            }*/
             // this.getBusinessList();
         }
     }

@@ -1,5 +1,6 @@
 package com.example.amynguyen.foodlover.Fragments;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,9 +19,11 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -102,12 +106,12 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
         footView = inflater.inflate(R.layout.footer_view, null);
         // mHandler = new MyHandler();
 
-        //create database
+        // create database
         db = MyDBHandler.getInstance(getContext());
 
+        // Set up basic view
         initLoad(view);
         //favorite = (ImageView) view.findViewById(R.id.imageViewFavorite);
-
 
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
 
@@ -117,15 +121,18 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
 
-        savedInstanceState.putString("testchoi", "Gladiator");
+        // savedInstanceState.putString("testchoi", "Gladiator");
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             //Restore the fragment's state here
-            System.out.println("tao day " + savedInstanceState.getString("testchoi"));
+            System.out.println("quay lai 1");
         }
+        // Setup listener for hide keyboard and loose focus
+        setupUI(mainView.findViewById(R.id.scrollView));
+
         // System.out.println(savedInstanceState.getString("testchoi"));
 
     }
@@ -138,12 +145,11 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
         //distanceInput.setFocusable(false);
 
 
-
         final Button btnSearch = (Button) view.findViewById(R.id.btnSearch);
 
-        foodSearch.setFocusable(true);
-        foodSearch.setIconified(false);
-        foodSearch.requestFocusFromTouch();
+        // foodSearch.setFocusable(true);
+        // foodSearch.setIconified(false);
+        // foodSearch.requestFocusFromTouch();
 /*        distanceInput.setFocusable(false);
         distanceInput.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -233,11 +239,9 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                 //System.out.println(foodSearch.getQuery().toString().equals(""));
                 // if(foodSearch.getQuery().toString() == "") Toast.makeText(view.getContext(), "dfsdfsdf", Toast.LENGTH_SHORT).show();
                 // else getBusinessList();
+                // foodSearch.onActionViewCollapsed();
+                // locationSearch.onActionViewCollapsed();
                 getBusinessList();
-                distanceInput.setFocusableInTouchMode(false);
-                distanceInput.setFocusable(false);
-                distanceInput.setFocusableInTouchMode(true);
-                distanceInput.setFocusable(true);
             }
         });
 
@@ -305,23 +309,35 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
 
             }
         });*/
+
+
     }
 
 
 
     public void getBusinessList() {
         try {
-            // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) getActivity());
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, (LocationListener) getActivity());
             // Get last known location
             Criteria c = new Criteria();
             //if we pass false than
             //it will check first satellite location than Internet and than Sim Network
             String provider = mLocationManager.getBestProvider(c, false);
             Location location = mLocationManager.getLastKnownLocation(provider);
+            // Set location
+            if (location != null) {
+                String coordinate = location.getLatitude() + ", " + location.getLongitude();
+                yelpHelper.setCoordinate(coordinate);
+                //yelpHelper.setCoordinate("49.20390,-122.91308");
+                // System.out.println(yelpHelper.getCoordinate());
+            }
+            if (locationSearch.getQuery().toString().equals("")) yelpHelper.setLocation("");
+            else yelpHelper.setLocation(locationSearch.getQuery().toString());
             //Location location = getLastKnownLocation();
             // Execute if its the first location
             // mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, this);
-            // System.out.println(location);
+            System.out.println(yelpHelper.getLocation());
 
             // Reset offset
             yelpHelper.setOffset(0);
@@ -340,15 +356,6 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
             // System.out.println(yelpHelper.getRadius());
             // Set restaurant query
             yelpHelper.setTerm(foodSearch.getQuery().toString());
-            // Set location
-            if (location != null) {
-                String coordinate = location.getLatitude() + ", " + location.getLongitude();
-                yelpHelper.setCoordinate(coordinate);
-                //yelpHelper.setCoordinate("49.20390,-122.91308");
-                // System.out.println(yelpHelper.getCoordinate());
-            }
-            if (locationSearch.getQuery().toString().equals("")) yelpHelper.setLocation("");
-            else yelpHelper.setLocation(locationSearch.getQuery().toString());
             // System.out.println("Location: " + yelpHelper.getLocation());
             // Print// create Yelp Helper instance
             final Handler handler = new Handler(Looper.getMainLooper());
@@ -557,7 +564,73 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
 
         }
     }*/
+public static void hideSoftKeyboard(Activity activity) {
+    InputMethodManager inputMethodManager =
+            (InputMethodManager) activity.getSystemService(
+                    Activity.INPUT_METHOD_SERVICE);
+    if(activity.getCurrentFocus() != null) {
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
+        activity.getCurrentFocus().clearFocus();
+    }
+}
+    public void setupUI(View view) {
 
+        // if(!(view instanceof SearchView) && !(view instanceof EditText)) {
+
+            view.setOnTouchListener(new View.OnTouchListener() {
+
+                public boolean onTouch(View v, MotionEvent event) {
+/*                    foodSearch.setQuery("", false);
+                    foodSearch.clearFocus();
+                    foodSearch.onActionViewCollapsed();
+                    locationSearch.setQuery("", false);
+                    locationSearch.clearFocus();
+                    locationSearch.onActionViewCollapsed();
+                    distanceInput.setFocusableInTouchMode(false);
+                    distanceInput.setFocusable(false);
+                    distanceInput.setFocusableInTouchMode(true);
+                    distanceInput.setFocusable(true);*/
+                    v.clearFocus();
+                    // if(getActivity().getCurrentFocus() != null ) getActivity().getCurrentFocus().clearFocus();
+                    if(!(v instanceof SearchView)) {
+                        //foodSearch.onActionViewCollapsed();
+                        //locationSearch.onActionViewCollapsed();
+                    }
+                    if(!(v instanceof EditText)) {
+                        distanceInput.setCursorVisible(false);
+                        distanceInput.setFocusable(false);
+                        distanceInput.setFocusableInTouchMode(false);
+                    }else {
+                        distanceInput.setCursorVisible(true);
+                        distanceInput.setFocusable(true);
+                        distanceInput.setFocusableInTouchMode(true);
+                    }
+                    hideSoftKeyboard(getActivity());
+                    return false;
+                }
+
+            });
+        // }
+/*        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(getActivity());
+                    return false;
+                }
+            });
+        }*/
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+
+                setupUI(innerView);
+            }
+        }
+    }
 
 }
 
