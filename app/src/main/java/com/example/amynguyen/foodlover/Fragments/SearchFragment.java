@@ -171,6 +171,16 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
 
                 btnView = myDialog.findViewById(R.id.buttonView);
                 btnFavorite = myDialog.findViewById(R.id.buttonFavorite);
+                if(!db.isBusinessexistFromRecent(((Business) myAdapter.getItem(position)).getBusinessId())) {
+                    db.addToRecent(myAdapter, position);
+                }
+                else {
+                    db.deleteFromRecent(myAdapter, position);
+                    db.addToRecent(myAdapter, position);
+                }
+                if(db.loadRecent().size() > 10) {
+                    db.deleteFirstRecordFromRecent();
+                }
                 btnView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -178,16 +188,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                         String uri = String.format(Locale.ENGLISH, "geo:0,0?q=%s", currentItem.getAddress());
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                         getContext().startActivity(intent);
-                        if(!db.isBusinessexistFromRecent(((Business) myAdapter.getItem(position)).getBusinessId())) {
-                            db.addToRecent(myAdapter, position);
-                        }
-                        else {
-                            db.deleteFromRecent(myAdapter, position);
-                            db.addToRecent(myAdapter, position);
-                        }
-                        if(db.loadRecent().size() > 10) {
-                            db.deleteFirstRecordFromRecent();
-                        }
+
 
 
                     }
