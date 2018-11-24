@@ -3,138 +3,142 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-<android.support.constraint.ConstraintLayout
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imageViewBanner"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/txtImageDescription"
-        android:src="@drawable/banner"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
 
-    <SearchView
-        android:id="@+id/searchViewRestaurant"
-        android:layout_width="360dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/colorSearch"
-        android:queryHint="@string/txtFoodHint"
-        android:searchIcon="@drawable/ic_food"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <SearchView
-        android:id="@+id/searchViewLocation"
-        android:layout_width="360dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/colorSearch"
-        android:queryHint="@string/txtLocationHint"
-        android:searchIcon="@drawable/ic_location"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchViewRestaurant" />
+            <ImageView
+                android:id="@+id/imageViewBanner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/txtImageDescription"
+                android:src="@drawable/banner"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
-        android:id="@+id/txtViewDistance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/txtDistance"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.013"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewBanner" />
+            <SearchView
+                android:id="@+id/searchViewRestaurant"
+                android:layout_width="360dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorSearch"
+                android:queryHint="@string/txtFoodHint"
+                android:searchIcon="@drawable/ic_food"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/editTextDistance"
-        android:layout_width="81dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="8dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="@string/distanceHint"
-        android:inputType="number"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.014"
-        app:layout_constraintStart_toEndOf="@+id/txtViewDistance"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewBanner" />
+            <SearchView
+                android:id="@+id/searchViewLocation"
+                android:layout_width="360dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/colorSearch"
+                android:queryHint="@string/txtLocationHint"
+                android:searchIcon="@drawable/ic_location"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/searchViewRestaurant" />
 
-    <TextView
-        android:id="@+id/textViewSortBy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+            <TextView
+                android:id="@+id/txtViewDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/txtDistance"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.013"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewBanner" />
 
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/txtSortBy"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.012"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtViewDistance" />
+            <EditText
+                android:id="@+id/editTextDistance"
+                android:layout_width="81dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="8dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/distanceHint"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.014"
+                app:layout_constraintStart_toEndOf="@+id/txtViewDistance"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewBanner" />
 
-    <Spinner
-        android:id="@+id/spinnerSortBy"
-        android:layout_width="149dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:entries="@array/sortBy"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.019"
-        app:layout_constraintStart_toEndOf="@+id/textViewSortBy"
-        app:layout_constraintTop_toBottomOf="@+id/editTextDistance" />
+            <TextView
+                android:id="@+id/textViewSortBy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
-    <Button
-        android:id="@+id/btnSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:text="@string/searchBtn"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerSortBy" />
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/txtSortBy"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.012"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtViewDistance" />
 
-    <com.example.amynguyen.foodlover.CustomView.NoScrollListView
-        android:id="@+id/listViewResult"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="13dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSearch" />
+            <Spinner
+                android:id="@+id/spinnerSortBy"
+                android:layout_width="149dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:entries="@array/sortBy"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.019"
+                app:layout_constraintStart_toEndOf="@+id/textViewSortBy"
+                app:layout_constraintTop_toBottomOf="@+id/editTextDistance" />
 
-</android.support.constraint.ConstraintLayout>
+            <Button
+                android:id="@+id/btnSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="@string/searchBtn"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spinnerSortBy" />
+
+            <com.example.amynguyen.foodlover.CustomView.NoScrollListView
+                android:id="@+id/listViewResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="70dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/btnSearch" />
+        </android.support.constraint.ConstraintLayout>
+
+
+
 </com.example.amynguyen.foodlover.CustomView.ScrollViewExt>
