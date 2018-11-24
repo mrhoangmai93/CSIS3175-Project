@@ -18,6 +18,7 @@
     <string name="btnFavorite">Add To Favorite</string>
     <string name="dialogImgBackground">Dialog Image Background</string>
     <string name="searchBtn">Search</string>
+    <string name="imgDescriptionSplash">Splash Image</string>
     <string-array name="sortBy">
         <item>Best Match</item>
         <item>Distance</item>
