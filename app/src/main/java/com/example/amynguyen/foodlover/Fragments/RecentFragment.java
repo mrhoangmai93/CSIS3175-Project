@@ -83,7 +83,6 @@ public class RecentFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void onClick(View view) {
                         if(db.isBusinessExistFromFavorite(((Business) myAdapter.getItem(i)).getBusinessId())) {
-                            //System.out.println("Result delete" + db.loadFavorite());
                             favorite.setImageResource(R.drawable.ic_favorite_border);
                             btnFavorite.setText("Add To Favorite");
                             db.deleteFromFavorite(myAdapter, i);
@@ -93,7 +92,6 @@ public class RecentFragment extends android.support.v4.app.Fragment {
                                 favorite.setImageResource(R.drawable.ic_favorite);
                                 db.addToFavorite(myAdapter, i);
                                 btnFavorite.setText("Remove From Favorite");
-                                //System.out.println("Result" + db.loadFavorite());
                             }
                         }
                     }
@@ -101,8 +99,6 @@ public class RecentFragment extends android.support.v4.app.Fragment {
 
             }
         });
-        //BusinessLineItemAdapter myAdapter = new BusinessLineItemAdapter(businessInfo, getContext());
-        // myList.setAdapter(myAdapter);
 
         return view;
 

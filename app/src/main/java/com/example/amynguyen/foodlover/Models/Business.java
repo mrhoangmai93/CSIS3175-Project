@@ -12,14 +12,14 @@ public class Business {
 
 
 
-    public Business(String  businessId, String name, String address, String category, Double rating, String imgURL)   {
+    public Business(String  businessId, String name, String address, String category, Double rating, Integer reviewCount, String imgURL)   {
         this.businessId = businessId;
         this.name = name;
         this.address = address;
         this.category = category;
         this.rating = rating;
         this.imgURL = imgURL;
-        //this.reviewCount = reviewCount;
+        this.reviewCount = reviewCount;
     }
 
 

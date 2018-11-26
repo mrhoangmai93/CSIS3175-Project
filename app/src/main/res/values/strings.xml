@@ -14,7 +14,7 @@
     <string name="imgRestaurant">restaurant image</string>
     <string name="favoriteIcon">Favorite List Added</string>
     <string name="txtImgDesOpenClose">Open Close Restaurant</string>
-    <string name="btnView">VIEW</string>
+    <string name="btnView">Get Direction</string>
     <string name="btnFavorite">Add To Favorite</string>
     <string name="dialogImgBackground">Dialog Image Background</string>
     <string name="searchBtn">Search</string>

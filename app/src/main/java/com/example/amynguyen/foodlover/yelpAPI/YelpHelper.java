@@ -24,9 +24,7 @@ public class YelpHelper {
     public final static String YIELP_API_KEY = "MsBMFjvBxbbjORnbOCk0hBaFONlDNDt0C1uUGik3WC3N_r0IfLGoDqhdmNrUSUgrfYXVd-nNTodyE4E3rTdOgt5G58rFlCYEMpMPGyHT7pvCA2-nW_UkzazS_8bjW3Yx";
 
     RapidApiConnect connect;
-    Map<String, Argument> body;
     Gson gson;
-
     String term = "";
     Boolean openNow = true;
     int radius = 0;
@@ -38,34 +36,29 @@ public class YelpHelper {
 
     public YelpHelper() {
         this.connect = new RapidApiConnect(APP_NAME, APP_ID);
-        this.body = new HashMap<String, Argument>();
-        body.put("accessToken", new Argument("data", YIELP_API_KEY));
-
         gson = new Gson();
     }
     public JsonObject getBusinessQuery() {
+        Map<String, Argument> body = new HashMap<String, Argument>();
+        body.put("accessToken", new Argument("data", YIELP_API_KEY));
+        // If no location , go back
         if(location == null && coordinate == null) return null;
-        if(!location.equals("")) body.put("location", new Argument("data", location));
+        if(!location.equals("") && location != null) body.put("location", new Argument("data", location));
         else body.put("coordinate", new Argument("data", coordinate));
-        // body.put("coordinate", new Argument("data", coordinate));
-        System.out.println(location);
+        // Set list options
         body.put("term", new Argument("data", term));
         body.put("offset", new Argument("data", String.valueOf(offset)));
-        // body.put("openNow", new Argument("data", String.valueOf(openNow)));
         body.put("sortBy", new Argument("data", sortBy));
-        // System.out.println("Opennow:" + String.valueOf(openNow));
         body.put("limit", new Argument("data", String.valueOf(limit)));
         if(radius > 0 ) body.put("radius", new Argument("data", String.valueOf(radius)));
+
         try {
             Map<String, Object> response = connect.call("YelpAPI", "getBusinesses", body);
             if(response.get("success") != null) {
                 LinkedTreeMap<?,?> result = (LinkedTreeMap) response.get("success");
-                // JsonObject jsonObject = gson.toJsonTree(yourMap).getAsJsonObject();
                 JsonObject data = gson.toJsonTree(result).getAsJsonObject();
-                // JsonArray array = data.getAsJsonObject().getAsJsonArray("businesses");
                 System.out.println("success: " + data.getAsJsonObject().get("total"));
                 return data;
-                // return null;
             } else{
                 System.out.println("error: " + response);
                 return null;

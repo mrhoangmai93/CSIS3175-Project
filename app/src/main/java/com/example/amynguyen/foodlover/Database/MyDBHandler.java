@@ -44,12 +44,12 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
 
         String createTableFavorite = "CREATE TABLE " + TABLE_FAVORITE_NAME +
-                "(businessID TEXT, name TEXT, address TEXT, category TEXT, rating FLOAT, imgURL TEXT)";
+                "(businessID TEXT, name TEXT, address TEXT, category TEXT, rating FLOAT, reviewCount INT, imgURL TEXT)";
         sqLiteDatabase.execSQL(createTableFavorite);
 
 
         String createTableRecent = "CREATE TABLE " + TABLE_RECENT_NAME +
-                "(businessID TEXT, name TEXT, address TEXT, category TEXT, rating FLOAT, imgURL TEXT)";
+                "(businessID TEXT, name TEXT, address TEXT, category TEXT, rating FLOAT, reviewCount INT, imgURL TEXT)";
         sqLiteDatabase.execSQL(createTableRecent);
     }
 
@@ -70,6 +70,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         val.put("address", biz.getAddress());
         val.put("category", biz.getCategory());
         val.put("rating", biz.getRating());
+        val.put("reviewCount", biz.getReviewCount());
         val.put("imgURL", biz.getImgURL());
 
         long result;
@@ -86,6 +87,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         val.put("address", biz.getAddress());
         val.put("category", biz.getCategory());
         val.put("rating", biz.getRating());
+        val.put("reviewCount", biz.getReviewCount());
         val.put("imgURL", biz.getImgURL());
 
         long result;
@@ -104,30 +106,10 @@ public class MyDBHandler extends SQLiteOpenHelper {
             do {
                 Business biz = new Business(cursor.getString(0),
                         cursor.getString(1), cursor.getString(2), cursor.getString(3),
-                        cursor.getDouble(4), cursor.getString(5));
-/*                biz.setBusinessId(cursor.getString(0));
-                biz.setName(cursor.getString(1));
-                biz.setAddress(cursor.getString(2));
-                biz.setCategory(cursor.getString(3));
-                biz.setRating(cursor.getDouble(4));
-                biz.setImgURL(cursor.getString(5));*/
-                System.out.println("Business: " + biz.getName());
+                        cursor.getDouble(4), cursor.getInt(5), cursor.getString(6));
                 bizList.add(biz);
             } while (cursor.moveToNext());
         }
-
-
-        /*while (cursor.moveToNext()) {
-            biz.setBusinessId(cursor.getString(0));
-            biz.setName(cursor.getString(1));
-            biz.setAddress(cursor.getString(2));
-            biz.setCategory(cursor.getString(3));
-            biz.setRating(cursor.getDouble(4));
-            biz.setImgURL(cursor.getString(5));
-            //System.out.println("Hien thi " + biz.getName());
-            bizList.add(biz);
-
-        }*/
 
         cursor.close();
         db.close();
@@ -136,13 +118,8 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
     public void deleteFromFavorite(BusinessLineItemAdapter myAdapter, int i) {
         Business biz = (Business) myAdapter.getItem(i);
-//        String query = "SELECT * FROM " + TABLE_FAVORITE_NAME + " WHERE businessID = "
-//                + "'" +  String.valueOf(biz.getBusinessId()) + "'";
        SQLiteDatabase db = this.getWritableDatabase();
-//        Cursor cursor = db.rawQuery(query, null);
-
             db.delete(TABLE_FAVORITE_NAME, "businessID =?" , new String[] {biz.getBusinessId()});
-
         db.close();
 
     }
@@ -180,13 +157,8 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
     public void deleteFromRecent(BusinessLineItemAdapter myAdapter, int i) {
         Business biz = (Business) myAdapter.getItem(i);
-//        String query = "SELECT * FROM " + TABLE_FAVORITE_NAME + " WHERE businessID = "
-//                + "'" +  String.valueOf(biz.getBusinessId()) + "'";
         SQLiteDatabase db = this.getWritableDatabase();
-//        Cursor cursor = db.rawQuery(query, null);
-
         db.delete(TABLE_RECENT_NAME, "businessID =?" , new String[] {biz.getBusinessId()});
-
         db.close();
     }
 
@@ -207,31 +179,11 @@ public class MyDBHandler extends SQLiteOpenHelper {
             do {
                 Business biz = new Business(cursor.getString(0),
                         cursor.getString(1), cursor.getString(2), cursor.getString(3),
-                        cursor.getDouble(4), cursor.getString(5));
-/*                biz.setBusinessId(cursor.getString(0));
-                biz.setName(cursor.getString(1));
-                biz.setAddress(cursor.getString(2));
-                biz.setCategory(cursor.getString(3));
-                biz.setRating(cursor.getDouble(4));
-                biz.setImgURL(cursor.getString(5));*/
+                        cursor.getDouble(4), cursor.getInt(5), cursor.getString(6));
                 System.out.println("Business: " + biz.getName());
                 bizList.add(biz);
             } while (cursor.moveToPrevious());
         }
-
-
-        /*while (cursor.moveToNext()) {
-            biz.setBusinessId(cursor.getString(0));
-            biz.setName(cursor.getString(1));
-            biz.setAddress(cursor.getString(2));
-            biz.setCategory(cursor.getString(3));
-            biz.setRating(cursor.getDouble(4));
-            biz.setImgURL(cursor.getString(5));
-            //System.out.println("Hien thi " + biz.getName());
-            bizList.add(biz);
-
-        }*/
-
         cursor.close();
         db.close();
         return bizList;

@@ -34,9 +34,6 @@ public class BusinessLineItemAdapter extends BaseAdapter {
          businessInfoList = businessInfo;
          layoutInflater = LayoutInflater.from(context);
          this.myDBHandler = myDBHandler;
-/*        for(Business bus : businessInfoList) {
-            System.out.println("result #" + bus.getName());
-        }*/
         this.context = context;
 
 
@@ -50,22 +47,11 @@ public class BusinessLineItemAdapter extends BaseAdapter {
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .displayer(new RoundedBitmapDisplayer(20))
                 .build();
-        // imageLoader.init(ImageLoaderConfiguration.createDefault(context));
 
     }
 
     public void addListItemToAdapter(List<Business> list)  {
-        // System.out.println("Thang dau tien:" + list.get(0).getName());
         businessInfoList.addAll(list);
-        // System.out.println("Thang 21: " + businessInfoList.get(20).getName());
-
-        // this.notifyDataSetChanged();
-        // for(Business bus : list) {
-        //    businessInfoList.add(bus);
-        // }
-        // notifyDataSetChanged();
-        //this.notifyDataSetInvalidated();
-
     }
 
     public void deleteItem(int  i)    {
@@ -135,7 +121,6 @@ public class BusinessLineItemAdapter extends BaseAdapter {
         TextView txtCategory;
         TextView txtAddress;
         TextView txtDistance;
-        ImageView isClosed;
         ImageView isFavourite;
         TextView txtReviewCount;
 

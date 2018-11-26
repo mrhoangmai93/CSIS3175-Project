@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View;
@@ -43,7 +44,6 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class MainActivity extends AppCompatActivity  implements LocationListener,BottomNavigationView.OnNavigationItemSelectedListener  {
 
-    private TextView mTextMessage;
     private LocationManager mLocationManager;
     private static final String[] LOCATION_PERMS={
             ACCESS_FINE_LOCATION,
@@ -53,21 +53,19 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     private FragNavController fragNavController;
     ;
 
-    //indices to fragments
+    // Indices to fragments
     private final int TAB_FIRST = FragNavController.TAB1;
     private final int TAB_SECOND = FragNavController.TAB2;
     private final int TAB_THIRD = FragNavController.TAB3;
-
+    List<Fragment> fragments = new ArrayList<>(3);
     private static final int LOCATION_REQUEST=1340;
-    Fragment fragment = new SearchFragment();
-    YelpHelper yelpHelper = new YelpHelper();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //FragNav
+
         //list of fragments
-        List<Fragment> fragments = new ArrayList<>(3);
+
         //add fragments to list
         fragments.add(SearchFragment.newInstance(0));
         fragments.add(FavoriteFragment.newInstance(0));
@@ -79,19 +77,13 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
                 .defaultTransactionOptions(FragNavTransactionOptions.newBuilder().transition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).build())
                 .build();
 
-        // this.getBusinessList();
+        // Init location manager
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (!canAccessLocation()) {
             ActivityCompat.requestPermissions(this, LOCATION_PERMS, LOCATION_REQUEST);
         }
-        try {
-/*            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, MainActivity.this);
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, MainActivity.this);*/
-            //Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            //System.out.println(location);
-        }catch (SecurityException exception) {
-            System.out.println(exception);
-        }
+
+        // Init image loader
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(this.getBaseContext()));
     }
 
@@ -101,21 +93,9 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
-        // loadFragment(fragment);
-
-        navigation.setOnNavigationItemSelectedListener(this);
-/*        try {
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, MainActivity.this);
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, MainActivity.this);
-            Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            // System.out.println(location);
-        }catch (SecurityException exception) {
-            System.out.println(exception);
-        }*/
     }
     @Override
     public void onLocationChanged(Location location) {
-        // this.getBusinessList();
         if (location != null) {
             Log.v("Location Changed", location.getLatitude() + " and " + location.getLongitude());
             mLocationManager.removeUpdates(MainActivity.this);
@@ -149,13 +129,6 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
                 || PermissionsMap.get(ACCESS_COARSE_LOCATION) != 0){
             Toast.makeText(this, "Location permission is a must", Toast.LENGTH_SHORT).show();
             finish();
-        }else {
-/*            try {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, MainActivity.this);
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, MainActivity.this);
-            }catch (SecurityException exception) {
-            }*/
-            // this.getBusinessList();
         }
     }
     private boolean canAccessLocation() {
@@ -164,15 +137,6 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     private boolean hasPermission(String perm) {
         return (PackageManager.PERMISSION_GRANTED == checkSelfPermission(perm));
     }
-
-/*    private boolean loadFragment(Fragment fragment) {
-        if (fragment != null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment)
-                    .commit();
-            return true;
-        }
-        return false;
-    }*/
 
     @Override
     public void onBackPressed() {
@@ -192,27 +156,27 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     }
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+        // Switch between fragments
         switch (item.getItemId()) {
             case R.id.navigation_search:
-                //fragment = new SearchFragment();
                 fragNavController.switchTab(TAB_FIRST);
+
+                // Reset SearchView text
+                SearchView foodSearch = fragments.get(0).getView().findViewById(R.id.searchViewRestaurant);
+                SearchView locationSearch = fragments.get(0).getView().findViewById(R.id.searchViewLocation);
+                foodSearch.onActionViewCollapsed();
+                locationSearch.onActionViewCollapsed();
                 break;
 
             case R.id.navigation_favorite:
-                //fragment = new FavoriteFragment();
                 fragNavController.switchTab(TAB_SECOND);
                 break;
 
             case R.id.navigation_recent:
-                //fragment = new RecentFragment();
                 fragNavController.switchTab(TAB_THIRD);
+
                 break;
-
-
-
         }
-        // return loadFragment(fragment);
         return true;
     }
 }
